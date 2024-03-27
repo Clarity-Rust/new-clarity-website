@@ -1,6 +1,6 @@
 import "./Home.css";
-import { Button } from "./ui/button";
-import { Link } from "react-router-dom";
+// import { Button } from "./ui/button";
+// import { Link } from "react-router-dom";
 
 const Home: React.FC = () => {
   return (

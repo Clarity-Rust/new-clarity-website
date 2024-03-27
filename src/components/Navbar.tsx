@@ -7,21 +7,21 @@ const Navbar: React.FC = () => {
   const { sharedState, setSharedState } = useAppContext();
   const [searchParams] = useSearchParams();
 
-  const logout = () => {
-    setSharedState({
-      ...sharedState,
-      authenticated: false,
-      username: "",
-      checkoutURL: "",
-      basketIdent: "",
-      authURL: "",
-    });
-    // clear local storage
-    localStorage.removeItem("basketIdent");
-    localStorage.removeItem("checkoutURL");
-    localStorage.removeItem("authURL");
-    localStorage.removeItem("authenticated");
-  };
+  // const logout = () => {
+  //   setSharedState({
+  //     ...sharedState,
+  //     authenticated: false,
+  //     username: "",
+  //     checkoutURL: "",
+  //     basketIdent: "",
+  //     authURL: "",
+  //   });
+  //   // clear local storage
+  //   localStorage.removeItem("basketIdent");
+  //   localStorage.removeItem("checkoutURL");
+  //   localStorage.removeItem("authURL");
+  //   localStorage.removeItem("authenticated");
+  // };
 
   useEffect(() => {
     const handleUrlChange = async () => {
@@ -51,23 +51,23 @@ const Navbar: React.FC = () => {
     handleUrlChange();
   }, [searchParams, setSharedState]);
 
-  const Profile: React.FC = () => {
-    return (
-      // if authenticated, show username. else show banner
-      <div>
-        {sharedState.authenticated ? (
-          "hello, " + sharedState.username
-        ) : (
-          <div className="flex gap-3">
-            <Link to={sharedState.authURL}>Login to purchase items</Link>
-            <Button variant="destructive" onClick={logout}>
-              Logout
-            </Button>
-          </div>
-        )}
-      </div>
-    );
-  };
+  // const Profile: React.FC = () => {
+  //   return (
+  //     // if authenticated, show username. else show banner
+  //     <div>
+  //       {sharedState.authenticated ? (
+  //         "hello, " + sharedState.username
+  //       ) : (
+  //         <div className="flex gap-3">
+  //           <Link to={sharedState.authURL}>Login to purchase items</Link>
+  //           <Button variant="destructive" onClick={logout}>
+  //             Logout
+  //           </Button>
+  //         </div>
+  //       )}
+  //     </div>
+  //   );
+  // };
 
   return (
     <nav className="navbar bg-gray-800 p-3 text-white">
