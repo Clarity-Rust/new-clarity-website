@@ -1,6 +1,7 @@
 // App.tsx
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { AppProvider } from "./context/AppContext"
 import Navbar from "./components/Navbar";
 import Home from "./components/Home";
 import Store from "./components/Store";
@@ -10,6 +11,7 @@ import Staff from "./components/Staff";
 
 const App: React.FC = () => {
   return (
+    <AppProvider>
     <Router>
       <div className="App">
         <Navbar />
@@ -22,6 +24,7 @@ const App: React.FC = () => {
         </Routes>
       </div>
     </Router>
+    </AppProvider>
   );
 };
 
