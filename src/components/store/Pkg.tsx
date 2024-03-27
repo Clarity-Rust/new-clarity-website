@@ -1,6 +1,8 @@
 import { PkgProps } from "@/types";
 import { useToast } from "../ui/use-toast";
 import { memo } from "react";
+import { useAppContext } from "@/context/AppContext";
+
 import {
   Popover,
   PopoverContent,
@@ -11,22 +13,51 @@ import { FaCartPlus } from "react-icons/fa";
 
 const Pkg: React.FC<PkgProps> = ({ size, showDesc, item }) => {
   const { toast } = useToast();
+  const { sharedState, setSharedState } = useAppContext();
 
   const addtoCart = async (id: string) => {
-    // make request
-    const url = `https://headless.tebex.io/api/baskets/basketID/packages`;
+    const url = `https://headless.tebex.io/api/baskets/${sharedState.basketIdent}/packages`;
+
     const res = await fetch(url, {
       method: "POST",
       headers: {
         Accept: "application/json",
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify({ packageId: id }),
+      body: JSON.stringify({ package_id: id }),
     });
-    const json = await res.json();
 
-    // test with real request later
+    if (!res.ok) {
+      const error = await res.json();
+      return toast({
+        title: error.title,
+        description: error.detail,
+      });
+    }
+    const json = await res.json();
+    console.log(json);
+
+    // Get the last element from json.data.packages
+    const lastPackage = json.data.packages[json.data.packages.length - 1];
+    console.log(lastPackage);
+
+    // Add package to state
+    setSharedState((state) => ({
+      ...state,
+      packages: [
+        ...sharedState.packages,
+        {
+          id: lastPackage.id,
+          innerhtml: lastPackage.description,
+          name: lastPackage.name,
+          imageURL: lastPackage.image,
+          price: lastPackage.total_price,
+        },
+      ],
+    }));
+
     toast({
-      description: `${item.name} added to cart`,
+      description: `${lastPackage.name} added to cart`,
     });
   };
 

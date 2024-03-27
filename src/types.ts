@@ -9,7 +9,7 @@ export interface Package {
   name: string;
   imageURL: string;
   price: string;
-  category: Category;
+  category?: Category;
   discount?: string;
   tax?: string;
 }
@@ -34,6 +34,7 @@ export interface SharedState {
   checkoutURL: string;
   authenticated: boolean;
   authURL: string;
+  packages: Package[];
 }
 
 export interface PkgProps {
