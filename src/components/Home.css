@@ -1,0 +1,29 @@
+.navbar {
+    position: static;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000; /* Adjust z-index as needed to ensure navbar is on top */
+    background-color: rgba(
+        255,
+        255,
+        255,
+        0.8
+    ); /* Semi-transparent background */
+    padding: 10px;
+    min-height: 5vh;
+    min-width: 100vw;
+}
+
+html,
+body {
+    overflow: hidden;
+}
+
+.background {
+    background-image: url("/Clarity_V1_SM.png");
+    background-size: cover;
+    min-height: 95vh;
+    min-width: 100vw;
+    overflow: hidden;
+}

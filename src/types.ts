@@ -34,7 +34,7 @@ export interface SharedState {
   checkoutURL: string;
   authenticated: boolean;
   authURL: string;
-  packages: Package[];
+  packages: string[];
 }
 
 export interface PkgProps {

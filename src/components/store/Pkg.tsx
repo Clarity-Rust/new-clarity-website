@@ -34,30 +34,11 @@ const Pkg: React.FC<PkgProps> = ({ size, showDesc, item }) => {
         description: error.detail,
       });
     }
+
     const json = await res.json();
-    console.log(json);
-
-    // Get the last element from json.data.packages
-    const lastPackage = json.data.packages[json.data.packages.length - 1];
-    console.log(lastPackage);
-
-    // Add package to state
-    setSharedState((state) => ({
-      ...state,
-      packages: [
-        ...sharedState.packages,
-        {
-          id: lastPackage.id,
-          innerhtml: lastPackage.description,
-          name: lastPackage.name,
-          imageURL: lastPackage.image,
-          price: lastPackage.total_price,
-        },
-      ],
-    }));
 
     toast({
-      description: `${lastPackage.name} added to cart`,
+      description: `${json.data.name} added to cart`,
     });
   };
 
@@ -66,11 +47,11 @@ const Pkg: React.FC<PkgProps> = ({ size, showDesc, item }) => {
       <img
         src={item.imageURL}
         alt={item.name}
-        className="h-30 mb-4 w-full rounded object-cover"
+        className="h-30 max-w-30 mb-4 w-full rounded object-cover"
       />
       <h3 className="text-xl font-bold">{item.name}</h3>
       <div className="text-md">${item.price}</div>
-      <div className="text-md mt-4">Category: {item.category.name}</div>
+      <div className="text-md mt-4">Category: {item.category?.name}</div>
       <Button
         className="flex gap-3"
         onClick={() => {

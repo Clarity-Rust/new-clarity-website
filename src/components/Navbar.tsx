@@ -43,6 +43,8 @@ const Navbar: React.FC = () => {
           authenticated: true,
           username: data.data.username,
         });
+        localStorage.setItem("authenticated", "true");
+        localStorage.setItem("username", data.data.username);
       }
     };
 
@@ -68,25 +70,30 @@ const Navbar: React.FC = () => {
   };
 
   return (
-    <nav className="bg-gray-800 p-3 text-white">
-      <ul className="flex gap-4">
+    <nav className="navbar bg-gray-800 p-3 text-white">
+      <ul className="flex items-center justify-center gap-4">
         <li>
           <Link to="/">Home</Link>
         </li>
         <li>
-          <Link to="/store">Store</Link>
+          <Link to="/staff">Staff</Link>
         </li>
         <li>
-          <Link to="/store/cart">
-            Cart -{" "}
-            {sharedState.packages.length === 0
-              ? "Empty"
-              : sharedState.packages.length + " packages"}
-          </Link>
+          <Link to="/leaderboard">Leaderboard</Link>
         </li>
         <li>
-          <Profile />
+          <Button asChild>
+            <Link to="https://discord.gg/clarityrust"> Discord </Link>
+          </Button>
         </li>
+        <li>
+          <Button asChild>
+            <Link to="https://steamcommunity.com/groups/clarityrust">
+              Steam
+            </Link>
+          </Button>
+        </li>
+        <li>{/* <Profile /> */}</li>
       </ul>
     </nav>
   );

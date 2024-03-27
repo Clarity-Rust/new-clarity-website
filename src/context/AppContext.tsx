@@ -20,14 +20,13 @@ interface AppProviderProps {
 
 export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   const [sharedState, setSharedState] = useState<SharedState>(() => {
-    // Initialize state with values from localStorage if available
     return {
       basketIdent: localStorage.getItem("basketIdent") || "",
       username: localStorage.getItem("username") || "",
       authenticated: false,
       checkoutURL: "",
       authURL: "",
-      packages: [],
+      packages: localStorage.getItem("packages")?.split(",") || [""],
     };
   });
 
@@ -74,6 +73,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
           authURL: localStorage.getItem("authURL") || "",
           authenticated: localStorage.getItem("authenticated") === "true",
           checkoutURL: localStorage.getItem("checkoutURL") || "",
+          packages: localStorage.getItem("packages")?.split(",") || [""],
         }));
       }
     };

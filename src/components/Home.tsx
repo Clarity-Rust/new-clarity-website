@@ -1,8 +1,13 @@
-// components/Home.tsx
+import "./Home.css";
+import { Button } from "./ui/button";
+import { Link } from "react-router-dom";
+
 const Home: React.FC = () => {
   return (
-    <div className="p-4">
-      <h1 className="text-3xl">Welcome to the Home Page!</h1>
+    <div className="background">
+      <div className="flex h-screen items-center justify-center">
+        <div className="grid grid-cols-3 gap-4"></div>
+      </div>
     </div>
   );
 };
