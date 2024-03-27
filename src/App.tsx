@@ -4,8 +4,8 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AppProvider } from "./context/AppContext"
 import Navbar from "./components/Navbar";
 import Home from "./components/Home";
-import Store from "./components/Store";
-import Cart from "./components/StoreCart";
+import Store from "./components/store/Store";
+import Cart from "./components/store/StoreCart";
 import Faq from "./components/Faq";
 import Staff from "./components/Staff";
 
