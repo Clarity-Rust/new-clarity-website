@@ -7,6 +7,8 @@ const Navbar: React.FC = () => {
   const { sharedState, setSharedState } = useAppContext();
   const [searchParams] = useSearchParams();
 
+  console.log(sharedState);
+
   const logout = () => {
     const navigate = useNavigate();
     setSharedState({
@@ -83,7 +85,10 @@ const Navbar: React.FC = () => {
           <Link to="/store">Store</Link>
         </li>
         <li>
-          <Link to="/store/cart">Cart - {sharedState.packages.length} {sharedState.packages.length === 1 ? "item" : "items"}</Link>
+          <Link to="/store/cart">
+          Cart - {sharedState.packages.length > 0 && sharedState.packages[0] !== "" ? `${sharedState.packages.length} ${sharedState.packages.length === 1 ? "item" : "items"}` : "No items"}
+
+          </Link>
         </li>
         <li>
           <Link to="/staff">Staff</Link>
