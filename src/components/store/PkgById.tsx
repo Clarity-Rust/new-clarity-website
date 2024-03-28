@@ -8,6 +8,7 @@ const PkgById: React.FC<{ id: string }> = ({ id }) => {
   const [pkg, setPkg] = useState<Package>();
   const { toast } = useToast();
   const { sharedState, setSharedState } = useAppContext();
+  const navigate = useNavigate(); 
 
   useEffect(() => {
     // fetch package by id
@@ -64,7 +65,6 @@ const PkgById: React.FC<{ id: string }> = ({ id }) => {
       className: "dark",
     });
   
-    const navigate = useNavigate(); 
     navigate(0); 
   };
 
@@ -81,6 +81,7 @@ const PkgById: React.FC<{ id: string }> = ({ id }) => {
         </>
       )}
       {pkg && <button onClick={() => removeFromCart(pkg.id)}>Remove</button>}
+
     </div>
   );
 };
