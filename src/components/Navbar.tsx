@@ -83,7 +83,7 @@ const Navbar: React.FC = () => {
           <Link to="/store">Store</Link>
         </li>
         <li>
-          <Link to="/store/cart">Cart</Link>
+          <Link to="/store/cart">Cart - {sharedState.packages.length} {sharedState.packages.length === 1 ? "item" : "items"}</Link>
         </li>
         <li>
           <Link to="/staff">Staff</Link>
@@ -92,7 +92,7 @@ const Navbar: React.FC = () => {
           <Link to="/leaderboard">Leaderboard</Link>
         </li>
         <li>
-          <Profile />{" "}
+          <Profile />
         </li>
         <li>
           {sharedState.authenticated ? (

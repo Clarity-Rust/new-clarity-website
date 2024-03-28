@@ -51,8 +51,9 @@ const Pkg: React.FC<PkgProps> = ({ item }) => {
 
     const json = await res.json();
     setSharedState({ ...sharedState, packages: [...sharedState.packages, id] });
+    const subscriptionType = type ? "Subscription" : "single";
     toast({
-      description: `${json.data.name} added to cart`,
+      description: `${json.data.packages.at(-1).name} - ${subscriptionType} added to cart`,
       className: "dark",
     });
   };
