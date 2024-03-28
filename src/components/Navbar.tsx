@@ -1,4 +1,4 @@
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { useAppContext } from "@/context/AppContext";
 import { useEffect } from "react";
 import { Button } from "./ui/button";
@@ -7,21 +7,25 @@ const Navbar: React.FC = () => {
   const { sharedState, setSharedState } = useAppContext();
   const [searchParams] = useSearchParams();
 
-  // const logout = () => {
-  //   setSharedState({
-  //     ...sharedState,
-  //     authenticated: false,
-  //     username: "",
-  //     checkoutURL: "",
-  //     basketIdent: "",
-  //     authURL: "",
-  //   });
-  //   // clear local storage
-  //   localStorage.removeItem("basketIdent");
-  //   localStorage.removeItem("checkoutURL");
-  //   localStorage.removeItem("authURL");
-  //   localStorage.removeItem("authenticated");
-  // };
+  const logout = () => {
+    const navigate = useNavigate();
+    setSharedState({
+      ...sharedState,
+      authenticated: false,
+      username: "",
+      checkoutURL: "",
+      basketIdent: "",
+      authURL: "",
+    });
+    // clear local storage
+    localStorage.removeItem("basketIdent");
+    localStorage.removeItem("checkoutURL");
+    localStorage.removeItem("authURL");
+    localStorage.removeItem("authenticated");
+
+    // redirect to home
+    navigate("/");
+  };
 
   useEffect(() => {
     const handleUrlChange = async () => {
@@ -29,7 +33,9 @@ const Navbar: React.FC = () => {
 
       if (queryParam === "true") {
         // re-call basket endpoint to get username
-        const url = `https://headless.tebex.io/api/accounts/${import.meta.env.VITE_WEBSTORE_IDENT}/baskets/${sharedState.basketIdent}`;
+        const url = `https://headless.tebex.io/api/accounts/${
+          import.meta.env.VITE_WEBSTORE_IDENT
+        }/baskets/${sharedState.basketIdent}`;
         const response = await fetch(url, {
           method: "GET",
           headers: {
@@ -51,35 +57,47 @@ const Navbar: React.FC = () => {
     handleUrlChange();
   }, [searchParams, setSharedState]);
 
-  // const Profile: React.FC = () => {
-  //   return (
-  //     // if authenticated, show username. else show banner
-  //     <div>
-  //       {sharedState.authenticated ? (
-  //         "hello, " + sharedState.username
-  //       ) : (
-  //         <div className="flex gap-3">
-  //           <Link to={sharedState.authURL}>Login to purchase items</Link>
-  //           <Button variant="destructive" onClick={logout}>
-  //             Logout
-  //           </Button>
-  //         </div>
-  //       )}
-  //     </div>
-  //   );
-  // };
+  const Profile: React.FC = () => {
+    return (
+      // if authenticated, show username. else show banner
+      <div>
+        {sharedState.authenticated ? (
+          "hello, " + sharedState.username
+        ) : (
+          <div className="flex gap-3">
+            <Link to={sharedState.authURL}>Login to purchase items</Link>
+          </div>
+        )}
+      </div>
+    );
+  };
 
   return (
     <nav className="navbar bg-gray-800 p-3 text-white">
       <ul className="flex items-center justify-center gap-4">
         <li>
-          <Link to="/">Home</Link>
+          <Link to="/store">Store</Link>
+        </li>
+        <li>
+          <Link to="/store/cart">Cart</Link>
         </li>
         <li>
           <Link to="/staff">Staff</Link>
         </li>
         <li>
           <Link to="/leaderboard">Leaderboard</Link>
+        </li>
+        <li>
+          <Profile />{" "}
+        </li>
+        <li>
+          {sharedState.authenticated ? (
+            <Button variant="destructive" onClick={logout}>
+              Logout
+            </Button>
+          ) : (
+            ""
+          )}
         </li>
         <li>
           <Button asChild>
@@ -93,7 +111,6 @@ const Navbar: React.FC = () => {
             </Link>
           </Button>
         </li>
-        <li>{/* <Profile /> */}</li>
       </ul>
     </nav>
   );
