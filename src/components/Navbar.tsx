@@ -6,9 +6,9 @@ import { Button } from "./ui/button";
 const Navbar: React.FC = () => {
   const { sharedState, setSharedState } = useAppContext();
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
 
   const logout = () => {
-    const navigate = useNavigate();
     setSharedState({
       ...sharedState,
       authenticated: false,
@@ -78,19 +78,25 @@ const Navbar: React.FC = () => {
 
   return (
     <nav className="navbar bg-gray-800 p-3 text-white">
-      <ul className="flex items-center justify-center gap-4">
+      <ul className="flex items-center gap-4">
         <li>
-          <Link to="/">temp|home</Link>
-          {/* add clarity logo and text here */}
+          <Link to="/" className="flex">
+            <img src="/clarity-logo.svg" alt="logo" className="h-10" />
+            <img src="/clarity-text.svg" alt="logo" className="h-10" />
+          </Link>
         </li>
         <li>
           <Link to="/store">Store</Link>
         </li>
-        <li>
-          <Link to="/store/cart">
-            Cart - {sharedState.packages.length - 1} items
-          </Link>
-        </li>
+        {sharedState.authenticated ? (
+          <li>
+            <Link to="/store/cart">
+              Cart - {sharedState.packages.length - 1} items
+            </Link>
+          </li>
+        ) : (
+          ""
+        )}
         <li>
           <Link to="/staff">Staff</Link>
         </li>
@@ -109,7 +115,7 @@ const Navbar: React.FC = () => {
             ""
           )}
         </li>
-        <li>
+        {/* <li>
           <Button asChild>
             <Link to="https://discord.gg/clarityrust"> Discord </Link>
           </Button>
@@ -120,7 +126,7 @@ const Navbar: React.FC = () => {
               Steam
             </Link>
           </Button>
-        </li>
+        </li> */}
       </ul>
     </nav>
   );
