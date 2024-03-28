@@ -7,8 +7,6 @@ const Navbar: React.FC = () => {
   const { sharedState, setSharedState } = useAppContext();
   const [searchParams] = useSearchParams();
 
-  console.log(sharedState);
-
   const logout = () => {
     const navigate = useNavigate();
     setSharedState({
@@ -18,12 +16,15 @@ const Navbar: React.FC = () => {
       checkoutURL: "",
       basketIdent: "",
       authURL: "",
+      packages: [""],
     });
     // clear local storage
     localStorage.removeItem("basketIdent");
     localStorage.removeItem("checkoutURL");
     localStorage.removeItem("authURL");
     localStorage.removeItem("authenticated");
+    localStorage.removeItem("username");
+    localStorage.removeItem("packages");
 
     // redirect to home
     navigate("/");
@@ -53,6 +54,7 @@ const Navbar: React.FC = () => {
         });
         localStorage.setItem("authenticated", "true");
         localStorage.setItem("username", data.data.username);
+        localStorage.setItem("packages", sharedState.packages.join(","));
       }
     };
 
@@ -86,8 +88,7 @@ const Navbar: React.FC = () => {
         </li>
         <li>
           <Link to="/store/cart">
-          Cart - {sharedState.packages.length > 0 && sharedState.packages[0] !== "" ? `${sharedState.packages.length} ${sharedState.packages.length === 1 ? "item" : "items"}` : "No items"}
-
+            Cart - {sharedState.packages.length - 1} items
           </Link>
         </li>
         <li>

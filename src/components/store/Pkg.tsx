@@ -51,6 +51,7 @@ const Pkg: React.FC<PkgProps> = ({ item }) => {
 
     const json = await res.json();
     setSharedState({ ...sharedState, packages: [...sharedState.packages, id] });
+    localStorage.setItem("packages", [...sharedState.packages, id].join(","));
     const subscriptionType = type ? "Subscription" : "single";
     toast({
       description: `${json.data.packages.at(-1).name} - ${subscriptionType} added to cart`,
