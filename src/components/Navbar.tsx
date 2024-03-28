@@ -78,56 +78,39 @@ const Navbar: React.FC = () => {
 
   return (
     <nav className="navbar bg-gray-800 p-3 text-white">
-      <ul className="flex items-center gap-4">
-        <li>
+      <div className="flex justify-between items-center w-full">
+        {/* Left items */}
+        <div className="flex items-center gap-4">
           <Link to="/" className="flex">
             <img src="/clarity-logo.svg" alt="logo" className="h-10" />
             <img src="/clarity-text.svg" alt="logo" className="h-10" />
           </Link>
-        </li>
-        <li>
           <Link to="/store">Store</Link>
-        </li>
-        {sharedState.authenticated ? (
-          <li>
+          {sharedState.authenticated && (
             <Link to="/store/cart">
               Cart - {sharedState.packages.length - 1} items
             </Link>
-          </li>
-        ) : (
-          ""
-        )}
-        <li>
+          )}
           <Link to="/staff">Staff</Link>
-        </li>
-        <li>
           <Link to="/leaderboard">Leaderboard</Link>
-        </li>
-        <li>
+        </div>
+
+        {/* Right items */}
+        <div className="flex items-center gap-4">
           <Profile />
-        </li>
-        <li>
-          {sharedState.authenticated ? (
+          {sharedState.authenticated && (
             <Button variant="destructive" onClick={logout}>
               Logout
             </Button>
-          ) : (
-            ""
           )}
-        </li>
-        {/* <li>
-          <Button asChild>
-            <Link to="https://discord.gg/clarityrust"> Discord </Link>
-          </Button>
-        </li>
-        <li>
-          <Button asChild>
-            <Link to="https://steamcommunity.com/groups/clarityrust">
-              Steam
-            </Link>
-          </Button>
-        </li> */}
-      </ul>
+          {/* <Button asChild>
+        <Link to="https://discord.gg/clarityrust">Discord</Link>
+      </Button>
+      <Button asChild>
+        <Link to="https://steamcommunity.com/groups/clarityrust">Steam</Link>
+      </Button> */}
+        </div>
+      </div>
     </nav>
   );
 };
