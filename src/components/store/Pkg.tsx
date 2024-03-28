@@ -2,6 +2,7 @@ import { PkgProps } from "@/types";
 import { useToast } from "../ui/use-toast";
 import { memo } from "react";
 import { useAppContext } from "@/context/AppContext";
+import { CiCircleInfo } from "react-icons/ci";
 
 import {
   Popover,
@@ -11,12 +12,24 @@ import {
 import { Button } from "@/components/ui/button";
 import { FaCartPlus } from "react-icons/fa";
 
-const Pkg: React.FC<PkgProps> = ({ size, showDesc, item }) => {
+const Pkg: React.FC<PkgProps> = ({ item }) => {
   const { toast } = useToast();
   const { sharedState, setSharedState } = useAppContext();
 
-  const addtoCart = async (id: string) => {
+  const addToCart = async (
+    id: string,
+    type: string | undefined = undefined
+  ) => {
     const url = `https://headless.tebex.io/api/baskets/${sharedState.basketIdent}/packages`;
+    interface RequestBody {
+      package_id: string;
+      type?: string;
+    }
+    let body: RequestBody = { package_id: id };
+
+    if (type) {
+      body = { ...body, type: type };
+    }
 
     const res = await fetch(url, {
       method: "POST",
@@ -24,7 +37,7 @@ const Pkg: React.FC<PkgProps> = ({ size, showDesc, item }) => {
         Accept: "application/json",
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ package_id: id }),
+      body: JSON.stringify(body),
     });
 
     if (!res.ok) {
@@ -37,9 +50,10 @@ const Pkg: React.FC<PkgProps> = ({ size, showDesc, item }) => {
     }
 
     const json = await res.json();
-
+    setSharedState({ ...sharedState, packages: [...sharedState.packages, id] });
     toast({
       description: `${json.data.name} added to cart`,
+      className: "dark",
     });
   };
 
@@ -52,22 +66,46 @@ const Pkg: React.FC<PkgProps> = ({ size, showDesc, item }) => {
       />
       <h3 className="text-xl font-bold">{item.name}</h3>
       <div className="text-md">${item.price}</div>
-      <div className="text-md mt-4">Category: {item.category?.name}</div>
-      <Button
-        className="flex gap-3"
-        onClick={() => {
-          addtoCart(item.id);
-        }}
-      >
-        <span>
-          <FaCartPlus />
-        </span>
-        Add to Cart
-      </Button>
+      <div className="flex">
+        {item.type === "both" ? (
+          <>
+            <Button
+              variant="outline"
+              onClick={() => addToCart(item.id, "single")}
+              className="dark"
+            >
+              <span>
+                <FaCartPlus size={22} />
+              </span>
+              One-time
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => addToCart(item.id, "subscription")}
+              className="dark"
+            >
+              Subscribe
+            </Button>
+          </>
+        ) : (
+          <Button
+            variant="outline"
+            onClick={() => addToCart(item.id)}
+            className="dark"
+          >
+            <span>
+              <FaCartPlus size={22} />
+            </span>
+            Add to Cart
+          </Button>
+        )}
+      </div>
       <Popover>
         <PopoverTrigger asChild>
           <Button variant="outline" className="dark">
-            Show information
+            <span>
+              <CiCircleInfo size={22} />
+            </span>
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-120 dark h-80 overflow-y-scroll">

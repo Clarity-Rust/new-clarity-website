@@ -14,7 +14,7 @@ const App: React.FC = () => {
   return (
     <AppProvider>
       <Router>
-        <div className="App bg-neutral-800 text-white">
+        <div className="App bg-neutral-800 text-white min-h-fit">
           <Navbar />
           <Routes>
             <Route path="/" element={<Home />} />

@@ -76,6 +76,10 @@ const Navbar: React.FC = () => {
     <nav className="navbar bg-gray-800 p-3 text-white">
       <ul className="flex items-center justify-center gap-4">
         <li>
+          <Link to="/">temp|home</Link>
+          {/* add clarity logo and text here */}
+        </li>
+        <li>
           <Link to="/store">Store</Link>
         </li>
         <li>

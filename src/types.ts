@@ -12,6 +12,7 @@ export interface Package {
   category?: Category;
   discount?: string;
   tax?: string;
+  type: string;
 }
 
 export interface Basket {

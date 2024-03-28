@@ -39,7 +39,9 @@ const Store: React.FC = () => {
 
   const fetchData = async () => {
     setIsLoading(true); // Start loading
-    const apiUrl = `https://headless.tebex.io/api/accounts/${import.meta.env.VITE_WEBSTORE_IDENT}/categories?includePackages=1`;
+    const apiUrl = `https://headless.tebex.io/api/accounts/${
+      import.meta.env.VITE_WEBSTORE_IDENT
+    }/categories?includePackages=1`;
     const response = await fetch(apiUrl, {
       method: "GET",
       headers: { Accept: "application/json" },
@@ -59,6 +61,7 @@ const Store: React.FC = () => {
             name: item.category.name,
             id: item.category.id,
           },
+          type: item.type,
         });
       });
     });
@@ -73,22 +76,32 @@ const Store: React.FC = () => {
 
   const filteredItems = useMemo(() => {
     if (filter.type === "lifetime") {
-      return items.filter((item) => item.category.name.includes("Lifetime"));
+      return items.filter((item) => item.category?.name.includes("Lifetime"));
     } else if (filter.type === "monthly") {
-      return items.filter((item) => item.category.name.includes("Monthly"));
+      return items.filter((item) => item.category?.name.includes("Monthly"));
     } else {
+      // implement default sorting here. monthly packages first
+      return items.sort((a, b) => {
+        if (a.category?.name.includes("Monthly") && !b.category?.name.includes("Monthly")) {
+          return -1;
+        } else if (!a.category?.name.includes("Monthly") && b.category?.name.includes("Monthly")) {
+          return 1;
+        } else {
+          return 0;
+        }
+      });
+      
       return items;
     }
   }, [items, filter]);
 
   return (
-    <div className="flex flex-col gap-4 p-4">
+    <div className="flex flex-col gap-4 p-4 bg-neutral-800 min-h-fit overflow-y-scroll">
       <h1 className="text-3xl">Welcome to the Store!</h1>
       <Filter filter={filter} setFilter={setFilter} />
-      <div className="grid h-screen grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+      <div className="grid h-screen grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 min-h-max">
         {isLoading ? (
           <div className="col-span-1 flex h-64 items-center justify-center sm:col-span-2 md:col-span-3 lg:col-span-4 xl:col-span-5">
-            {/* You can put more sophisticated loading indicators here */}
             <div className="text-lg font-semibold text-gray-400">
               Loading...
             </div>
