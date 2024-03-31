@@ -23,7 +23,7 @@ const Filter: React.FC<{
       <SelectTrigger className="w-[180px]">
         <SelectValue placeholder="Choose package type" />
       </SelectTrigger>
-      <SelectContent>
+      <SelectContent className="dark">
         <SelectItem value="lifetime">Lifetime</SelectItem>
         <SelectItem value="monthly">Monthly</SelectItem>
         <SelectItem value="all">All</SelectItem>
@@ -82,24 +82,30 @@ const Store: React.FC = () => {
     } else {
       // implement default sorting here. monthly packages first
       return items.sort((a, b) => {
-        if (a.category?.name.includes("Monthly") && !b.category?.name.includes("Monthly")) {
+        if (
+          a.category?.name.includes("Monthly") &&
+          !b.category?.name.includes("Monthly")
+        ) {
           return -1;
-        } else if (!a.category?.name.includes("Monthly") && b.category?.name.includes("Monthly")) {
+        } else if (
+          !a.category?.name.includes("Monthly") &&
+          b.category?.name.includes("Monthly")
+        ) {
           return 1;
         } else {
           return 0;
         }
       });
-      
+
       return items;
     }
   }, [items, filter]);
 
   return (
-    <div className="flex flex-col gap-4 p-4 bg-neutral-800 min-h-fit overflow-y-scroll">
-      <h1 className="text-3xl">Welcome to the Store!</h1>
+    <div className="flex flex-col gap-4 p-4 bg-neutral-800 min-h-screen"> {/* Ensures min-height covers the viewport */}
+      <h1 className="text-3xl text-white">Welcome to the Store!</h1>
       <Filter filter={filter} setFilter={setFilter} />
-      <div className="grid h-screen grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 min-h-max">
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"> {/* Removed h-screen */}
         {isLoading ? (
           <div className="col-span-1 flex h-64 items-center justify-center sm:col-span-2 md:col-span-3 lg:col-span-4 xl:col-span-5">
             <div className="text-lg font-semibold text-gray-400">
