@@ -74,11 +74,17 @@ const Navbar: React.FC = () => {
           <DropdownMenuLabel>Contact Us</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
-            <DropdownMenuItem>
-              <Link to="discord.com"> Discord </Link>{" "}
+            <DropdownMenuItem className=" text-sm hover:cursor-pointer">
+              <Button asChild variant="link">
+                <Link to="https://steamcommunity.com/groups/clarityrust">
+                  Steam
+                </Link>
+              </Button>
             </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Link to="discord.com"> Steam </Link>
+            <DropdownMenuItem className="text-sm hover:cursor-pointer">
+              <Button asChild variant="link">
+                <Link to="https://discord.gg/clarityrust">Discord</Link>
+              </Button>
             </DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
@@ -86,6 +92,7 @@ const Navbar: React.FC = () => {
             onClick={() => {
               logout();
             }}
+            className="hover:cursor-pointer"
           >
             Log out
           </DropdownMenuItem>
