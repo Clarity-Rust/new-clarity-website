@@ -15,20 +15,17 @@ import Staff from "./components/Staff";
 import { Toaster } from "./components/ui/toaster";
 import Leaderboard from "./components/Leaderboard";
 
-// Create a new component that wraps the App content and applies conditional styling
 const AppContent: React.FC = () => {
   const location = useLocation();
 
-  // Determine if the current route is the home page
   const isHomePage = location.pathname === "/";
 
-  // Apply conditional styling based on the current route
   const appStyle = isHomePage
-    ? { overflowX: "hidden", overflowY: "hidden", height: "100vh" }
+    ? { OverflowX: "hidden", OverflowY: "hidden", height: "100vh" }
     : {};
 
   return (
-    <div className="App min-h-fit bg-neutral-800 text-white" style={appStyle}>
+    <div className="App min-h-fit bg-neutral-800 text-white">
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />

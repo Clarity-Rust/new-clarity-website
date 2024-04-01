@@ -1,6 +1,7 @@
 .background {
     background-image: url("/rust_background.jpg");
     background-size: cover;
-}
-.home-main {
+    filter: brightness(70%) blur(0.2);
+    overflow-y: hidden;
+    height: 91.5vh;
 }

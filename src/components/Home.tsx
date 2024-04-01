@@ -1,12 +1,11 @@
 import { Link } from "react-router-dom";
 import "./Home.css";
 import { Button } from "./ui/button";
-// import { Link } from "react-router-dom";
 
 const Home: React.FC = () => {
   return (
     <div className="background">
-      <div className="home-main my-5 flex h-screen flex-col items-center justify-center">
+      <div className="home-main flex h-screen flex-col items-center justify-center">
         <div>
           <img src="/home-logo.png" width={600} />
         </div>

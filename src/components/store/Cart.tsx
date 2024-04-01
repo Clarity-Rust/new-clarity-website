@@ -46,6 +46,7 @@ const CheckoutComponent: React.FC = () => {
 };
 
 const Cart: React.FC = () => {
+  // @ts-expect-error how can i ignore this
   const { sharedState, setSharedState } = useAppContext();
   return (
     <div className="flex h-screen">
