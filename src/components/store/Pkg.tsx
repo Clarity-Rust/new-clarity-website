@@ -25,7 +25,6 @@ const Pkg: React.FC<PkgProps> = ({ item }) => {
   const { toast } = useToast();
   const { sharedState, setSharedState } = useAppContext();
   const [selectedOption, setSelectedOption] = useState<string>("one-time");
-  const [giftId, setGiftId] = useState<string>("");
 
   const handleAddToCart = (oneChoice = false) => {
     if (oneChoice === true) {
@@ -41,17 +40,23 @@ const Pkg: React.FC<PkgProps> = ({ item }) => {
   const addToCart = async (
     id: string,
     type: string | undefined = undefined,
+    target_username: string | undefined = undefined,
   ) => {
     const url = `https://headless.tebex.io/api/baskets/${sharedState.basketIdent}/packages`;
 
     interface RequestBody {
       package_id: string;
       type?: string;
+      target_username_id?: string;
     }
 
     let body: RequestBody = { package_id: id };
     if (type) {
       body = { ...body, type: type };
+    }
+
+    if (target_username) {
+      body = { ...body, target_username_id: target_username };
     }
 
     const res = await fetch(url, {
@@ -102,20 +107,20 @@ const Pkg: React.FC<PkgProps> = ({ item }) => {
     return (
       <Dialog>
         <DialogTrigger className="dark flex-1 rounded-sm bg-gray-800 text-sm">
-          Enter steam id
+          Enter Steam ID
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Enter your friend's steam ID.</DialogTitle>
+            <DialogTitle>Enter your friend's Steam ID.</DialogTitle>
             <DialogDescription className="flex gap-1">
-              <Input />
+              <Input oncha />
               <Button
                 onClick={() => {
-                  handleAddToCart(item.type === "single");
+                  addToCart(item.id, "single");
                 }}
-                className="dark bg-green-400"
+                className="dark bg-slate-400"
               >
-                Okay
+                Submit
               </Button>
             </DialogDescription>
           </DialogHeader>
@@ -134,7 +139,7 @@ const Pkg: React.FC<PkgProps> = ({ item }) => {
       <h3 className="mb-2 text-2xl font-bold">{item.name}</h3>
       <div className="text-md mb-4 font-semibold">${item.price}</div>
       <div className="mb-4 flex flex-col gap-2">
-        <div className="flex  gap-2">
+        <div className="flex gap-2">
           <Checkbox
             id={`isGift${item.id}`}
             onCheckedChange={(value) => {
