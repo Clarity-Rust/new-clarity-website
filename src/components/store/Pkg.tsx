@@ -107,11 +107,11 @@ const Pkg: React.FC<PkgProps> = ({ item }) => {
   };
 
   return (
-    <div className="rounded-lg bg-[#333342] p-4 text-white shadow-lg">
+    <div className="min-w-[250px] max-w-[350px] overflow-auto rounded-lg bg-[#333342] p-4 text-white shadow-lg">
       <img
         src={item.imageURL}
         alt={item.name}
-        className="mb-4 h-48 w-full rounded-lg object-cover"
+        className="mb-4 h-48 w-full rounded-lg object-fill"
       />
       <h3 className="mb-2 text-2xl font-bold">{item.name}</h3>
       <div className="text-md mb-4 font-semibold">${item.price}</div>

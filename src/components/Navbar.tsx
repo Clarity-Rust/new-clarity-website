@@ -30,7 +30,7 @@ const Navbar: React.FC = () => {
     });
     localStorage.clear();
 
-    navigate("/");
+    navigate("/store");
   };
 
   useEffect(() => {
