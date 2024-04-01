@@ -20,13 +20,20 @@ interface AppProviderProps {
 
 export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   const [sharedState, setSharedState] = useState<SharedState>(() => {
+    const storedPackages = localStorage.getItem("packages");
+    let packages = [];
+    try {
+      packages = storedPackages ? JSON.parse(storedPackages) : [];
+    } catch (error) {
+      console.error("Failed to parse packages from localStorage:", error);
+    }
     return {
       basketIdent: localStorage.getItem("basketIdent") || "",
       username: localStorage.getItem("username") || "",
       authenticated: false,
       checkoutURL: "",
       authURL: "",
-      packages: localStorage.getItem("packages")?.split(",") || [""],
+      packages: packages,
     };
   });
 
@@ -67,13 +74,14 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         localStorage.setItem("authURL", json[0].url);
       } else {
         // If basketIdent exists in localStorage, ensure state is updated accordingly
+        const packages = JSON.parse(localStorage.getItem("packages") || "[]");
         setSharedState((prevState) => ({
           ...prevState,
           basketIdent: localStorage.getItem("basketIdent") || "",
           authURL: localStorage.getItem("authURL") || "",
           authenticated: localStorage.getItem("authenticated") === "true",
           checkoutURL: localStorage.getItem("checkoutURL") || "",
-          packages: localStorage.getItem("packages")?.split(",") || [""],
+          packages: packages,
         }));
       }
     };

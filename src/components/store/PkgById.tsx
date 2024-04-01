@@ -50,7 +50,6 @@ const PkgById: React.FC<{ id: string }> = ({ id }) => {
       body: JSON.stringify({ package_id: id }),
     });
     const data = await response.json();
-    console.log(data);
 
     const updatedPackages = sharedState.packages.filter((pkg) => pkg !== id);
 
@@ -65,8 +64,6 @@ const PkgById: React.FC<{ id: string }> = ({ id }) => {
       description: `Item removed from cart`,
       className: "dark",
     });
-
-    navigate(0);
   };
 
   return (

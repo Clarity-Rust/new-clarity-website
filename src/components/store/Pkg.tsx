@@ -15,8 +15,18 @@ import { Checkbox } from "../ui/checkbox";
 const Pkg: React.FC<PkgProps> = ({ item }) => {
   const { toast } = useToast();
   const { sharedState, setSharedState } = useAppContext();
-  const [isGift, setIsGift] = useState(false);
-  const [isSubscription, setIsSubscription] = useState(false);
+  const [selectedOption, setSelectedOption] = useState<string>("one-time");
+
+  const handleAddToCart = (oneChoice = false) => {
+    if (oneChoice === true) {
+      addToCart(item.id, "single");
+    } else {
+      addToCart(
+        item.id,
+        selectedOption === "subscription" ? "subscription" : "single",
+      );
+    }
+  };
 
   const addToCart = async (
     id: string,
@@ -62,11 +72,6 @@ const Pkg: React.FC<PkgProps> = ({ item }) => {
     });
   };
 
-  const handleAddToCart = () => {
-    const type = isSubscription ? "subscription" : undefined;
-    addToCart(item.id, type);
-  };
-
   return (
     <div className="rounded-lg bg-slate-800 p-4 text-white shadow-lg">
       <img
@@ -80,7 +85,7 @@ const Pkg: React.FC<PkgProps> = ({ item }) => {
         <div className="flex  gap-2">
           <Checkbox
             id="isGift"
-            onChange={(e) => setIsGift(e.target.checked)}
+            onChange={() => setSelectedOption("gift")}
             className="dark"
           />
           <label
@@ -90,24 +95,29 @@ const Pkg: React.FC<PkgProps> = ({ item }) => {
             This is a gift
           </label>
         </div>
-        <div className="flex items-center gap-2">
-          <Checkbox
-            id="isSubscription"
-            onChange={(e) => setIsSubscription(e.target.checked)}
-            className="dark"
-          />
-          <label
-            htmlFor="isSubscription"
-            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-          >
-            Subscribe
-          </label>
-        </div>
+        {item.type === "both" && (
+          <div className="flex items-center gap-2">
+            <Checkbox
+              id="isSubscription"
+              checked={selectedOption === "subscription"}
+              onChange={() => setSelectedOption("subscription")}
+              className="dark"
+            />
+            <label
+              htmlFor="isSubscription"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              Subscribe
+            </label>
+          </div>
+        )}
       </div>
       <div className="flex justify-between gap-2">
         <Button
           variant="outline"
-          onClick={handleAddToCart}
+          onClick={() => {
+            handleAddToCart(item.type === "single");
+          }}
           className="dark mb-4 flex-1 bg-green-600"
         >
           <span className="mr-2">

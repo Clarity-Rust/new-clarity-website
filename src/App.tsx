@@ -26,7 +26,7 @@ const AppContent: React.FC = () => {
     : {};
 
   return (
-    <div className="App min-h-fit bg-neutral-800 text-white">
+    <div className="App min-h-fit bg-[#292930] text-white">
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
