@@ -1,9 +1,6 @@
 .background {
-  /* background-image: url("/Clarity_V1_SM.png"); */
-  background-size: cover;
-  min-height: 95vh;
-  min-width: 100vw;
-  overflow: hidden;
+    background-image: url("/rust_background.jpg");
+    background-size: cover;
 }
 .home-main {
 }

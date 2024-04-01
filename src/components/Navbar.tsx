@@ -2,6 +2,7 @@ import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { useAppContext } from "@/context/AppContext";
 import { useEffect } from "react";
 import { Button } from "./ui/button";
+import { IoIosLogIn } from "react-icons/io";
 
 const Navbar: React.FC = () => {
   const { sharedState, setSharedState } = useAppContext();
@@ -59,7 +60,7 @@ const Navbar: React.FC = () => {
     };
 
     handleUrlChange();
-  }, [searchParams, setSharedState]);
+  }, [searchParams, setSharedState, sharedState]);
 
   const Profile: React.FC = () => {
     return (
@@ -68,9 +69,12 @@ const Navbar: React.FC = () => {
         {sharedState.authenticated ? (
           "hello, " + sharedState.username
         ) : (
-          <div className="flex gap-3">
-            <Link to={sharedState.authURL}>Login to purchase items</Link>
-          </div>
+          <Link className="flex gap-1" to={sharedState.authURL}>
+            Login to purchase items
+            <span>
+              <IoIosLogIn size={23} />{" "}
+            </span>
+          </Link>
         )}
       </div>
     );
@@ -78,8 +82,7 @@ const Navbar: React.FC = () => {
 
   return (
     <nav className="navbar bg-gray-800 p-3 text-white">
-      <div className="flex justify-between items-center w-full">
-        {/* Left items */}
+      <div className="flex w-full items-center justify-between">
         <div className="flex items-center gap-4">
           <Link to="/" className="flex">
             <img src="/clarity-logo.svg" alt="logo" className="h-10" />
@@ -95,7 +98,6 @@ const Navbar: React.FC = () => {
           <Link to="/leaderboard">Leaderboard</Link>
         </div>
 
-        {/* Right items */}
         <div className="flex items-center gap-4">
           <Profile />
           {sharedState.authenticated && (
