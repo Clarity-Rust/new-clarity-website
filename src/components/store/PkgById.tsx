@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Package } from "@/types";
+import { Package, Gift } from "@/types";
 import { useToast } from "../ui/use-toast";
 import { useAppContext } from "@/context/AppContext";
 import { Popover, PopoverTrigger, PopoverContent } from "../ui/popover"; // Assume these are imported correctly
@@ -7,7 +7,7 @@ import { FaTrash } from "react-icons/fa";
 import { CiCircleInfo } from "react-icons/ci";
 import { Button } from "../ui/button";
 
-const PkgById: React.FC<{ id: string }> = ({ id }) => {
+const PkgById: React.FC<{ id: string; gift?: Gift }> = ({ id, gift }) => {
   const [pkg, setPkg] = useState<Package>();
   const { toast } = useToast();
   const { sharedState, setSharedState } = useAppContext();
@@ -100,6 +100,7 @@ const PkgById: React.FC<{ id: string }> = ({ id }) => {
             />
           </PopoverContent>
         </Popover>
+        {gift && "this is a gift"}
       </div>
       <div className="flex items-center gap-2">
         <Button

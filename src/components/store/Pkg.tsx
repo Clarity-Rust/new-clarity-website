@@ -12,7 +12,6 @@ import { FaCartPlus } from "react-icons/fa";
 import { useState } from "react";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Checkbox } from "../ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -61,6 +60,8 @@ const Pkg: React.FC<PkgProps> = ({ item }) => {
     if (target_username) {
       body = { ...body, target_username_id: target_username };
     }
+
+    console.log(body);
 
     const res = await fetch(url, {
       method: "POST",
@@ -128,6 +129,10 @@ const Pkg: React.FC<PkgProps> = ({ item }) => {
                 id={`subscription${item.id}`}
               />
               <Label htmlFor={`subscription${item.id}`}>Subscribe</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="onetime" id={`onetime${item.id}`} />
+              <Label htmlFor={`onetime${item.id}`}>One time</Label>
             </div>
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="gift" id={`gift${item.id}`} />

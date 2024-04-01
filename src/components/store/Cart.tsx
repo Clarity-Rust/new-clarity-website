@@ -4,6 +4,7 @@ import { Fragment, useEffect, useState } from "react";
 import { CiCircleInfo } from "react-icons/ci";
 import { Button } from "../ui/button";
 import { Gift } from "@/types";
+import { ScrollArea } from "../ui/scroll-area";
 
 const Cart: React.FC = () => {
   // @ts-expect-error how can i ignore this
@@ -52,6 +53,7 @@ const Cart: React.FC = () => {
           },
         });
         const data = await response.json();
+        console.log(data);
         // parse the gift information, if it exists
         data.data.packages.forEach((pkg: any) => {
           if (pkg.in_basket.gift_username_id && pkg.in_basket.gift_username) {
@@ -93,24 +95,33 @@ const Cart: React.FC = () => {
   return (
     <div className="flex h-screen flex-col items-center justify-center rounded-md p-4">
       <div className="flex h-3/4 w-full max-w-4xl flex-col items-center overflow-auto rounded-md p-4 text-white">
-        <h2 className="mb-4 text-xl">Packages in your cart:</h2>
-        {sharedState.packages.length > 0 ? (
-          sharedState.packages.map((item: string, index, array) => (
-            <Fragment key={item}>
-              <PkgById id={item} />
-              {index === array.length - 1 && errorMessage !== "" && (
-                <div className="mt-4 flex items-center text-red-400">
-                  <span className="mr-2 text-lg">
-                    <CiCircleInfo />
-                  </span>
-                  This div will contain info about why the checkout is disabled.
-                </div>
-              )}
-            </Fragment>
-          ))
-        ) : (
-          <p>Your cart is empty.</p>
-        )}
+        <h2 className="text-xl">Packages in your cart:</h2>
+        <ScrollArea className="w-full rounded-md border">
+          {sharedState.packages.length > 0 ? (
+            sharedState.packages.map((item: string, index, array) => {
+              const matchingGift = gifts.find(
+                (gift) => gift.package_id === item,
+              );
+              console.log(gifts);
+              return (
+                <Fragment key={item}>
+                  <PkgById id={item} gift={matchingGift} />
+                  {index === array.length - 1 && errorMessage !== "" && (
+                    <div className="mt-4 flex items-center text-red-400">
+                      <span className="mr-2 text-lg">
+                        <CiCircleInfo />
+                      </span>
+                      This div will contain info about why the checkout is
+                      disabled.
+                    </div>
+                  )}
+                </Fragment>
+              );
+            })
+          ) : (
+            <p>Your cart is empty.</p>
+          )}
+        </ScrollArea>
       </div>
 
       <div className="mt-4 flex w-full max-w-4xl flex-col items-center">
