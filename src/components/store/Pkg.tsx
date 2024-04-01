@@ -73,7 +73,7 @@ const Pkg: React.FC<PkgProps> = ({ item }) => {
   };
 
   return (
-    <div className="rounded-lg bg-slate-800 p-4 text-white shadow-lg">
+    <div className="rounded-lg bg-[#333342] p-4 text-white shadow-lg">
       <img
         src={item.imageURL}
         alt={item.name}

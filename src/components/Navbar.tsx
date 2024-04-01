@@ -17,29 +17,21 @@ const Navbar: React.FC = () => {
       checkoutURL: "",
       basketIdent: "",
       authURL: "",
-      packages: [""],
+      packages: [],
     });
-    // clear local storage
-    localStorage.removeItem("basketIdent");
-    localStorage.removeItem("checkoutURL");
-    localStorage.removeItem("authURL");
-    localStorage.removeItem("authenticated");
-    localStorage.removeItem("username");
-    localStorage.removeItem("packages");
+    // Clear local storage
+    localStorage.clear();
 
-    // redirect to home
+    // Redirect to home
     navigate("/");
   };
 
   useEffect(() => {
     const handleUrlChange = async () => {
       const queryParam = searchParams.get("authed");
-
       if (queryParam === "true") {
-        // re-call basket endpoint to get username
-        const url = `https://headless.tebex.io/api/accounts/${
-          import.meta.env.VITE_WEBSTORE_IDENT
-        }/baskets/${sharedState.basketIdent}`;
+        // Re-call basket endpoint to get username
+        const url = `https://headless.tebex.io/api/accounts/${import.meta.env.VITE_WEBSTORE_IDENT}/baskets/${sharedState.basketIdent}`;
         const response = await fetch(url, {
           method: "GET",
           headers: {
@@ -47,58 +39,59 @@ const Navbar: React.FC = () => {
           },
         });
         const data = await response.json();
-        console.log(data);
-        setSharedState({
-          ...sharedState,
+        setSharedState((prevState) => ({
+          ...prevState,
           authenticated: true,
           username: data.data.username,
-        });
+        }));
         localStorage.setItem("authenticated", "true");
         localStorage.setItem("username", data.data.username);
-        localStorage.setItem("packages", sharedState.packages.join(","));
+        // No need to update packages here if they are managed elsewhere
       }
     };
 
     handleUrlChange();
   }, [searchParams, setSharedState, sharedState]);
 
-  const Profile: React.FC = () => {
+  const Profile: React.FC = () => (
+    <div>
+      {sharedState.authenticated ? (
+        <span>Hello, {sharedState.username}</span>
+      ) : (
+        <Link className="flex gap-1" to={sharedState.authURL}>
+          Login to purchase items
+          <IoIosLogIn size={23} />
+        </Link>
+      )}
+    </div>
+  );
+
+  const Cart: React.FC = () => {
+    if (!sharedState.authenticated) return null;
+    // Calculate the number of items correctly, assuming 'packages' is an array
+    const itemCount = sharedState.packages.length;
     return (
-      // if authenticated, show username. else show banner
-      <div>
-        {sharedState.authenticated ? (
-          "hello, " + sharedState.username
-        ) : (
-          <Link className="flex gap-1" to={sharedState.authURL}>
-            Login to purchase items
-            <span>
-              <IoIosLogIn size={23} />{" "}
-            </span>
-          </Link>
-        )}
-      </div>
+      <Link to="/store/cart">
+        Cart - {itemCount} item{itemCount !== 1 ? "s" : ""}
+      </Link>
     );
   };
 
   return (
-    <nav className="navbar bg-gray-800 p-3 text-white">
+    <nav className="navbar h-15 bg-gray-800 p-3 text-white">
       <div className="flex w-full items-center justify-between">
         <div className="flex items-center gap-4">
-          <Link to="/" className="flex">
+          <Link to="/" className="flex gap-2">
             <img src="/clarity-logo.svg" alt="logo" className="h-10" />
             <img src="/clarity-text.svg" alt="logo" className="h-10" />
           </Link>
           <Link to="/store">Store</Link>
-          {sharedState.authenticated && (
-            <Link to="/store/cart">
-              Cart - {sharedState.packages.length - 1} items
-            </Link>
-          )}
           <Link to="/staff">Staff</Link>
           <Link to="/leaderboard">Leaderboard</Link>
         </div>
 
         <div className="flex items-center gap-4">
+          <Cart />
           <Profile />
           {sharedState.authenticated && (
             <Button variant="destructive" onClick={logout}>

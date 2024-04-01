@@ -100,7 +100,7 @@ const Store: React.FC = () => {
   }, [items, filter]);
 
   return (
-    <div className="flex min-h-screen flex-col gap-4 p-4">
+    <div className="flex min-h-screen flex-col gap-4 bg-[#292930] p-4 ">
       <h1 className="text-3xl text-white">
         Welcome to the Clarity Rust Store!
       </h1>
