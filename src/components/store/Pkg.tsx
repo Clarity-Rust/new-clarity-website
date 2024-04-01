@@ -131,13 +131,13 @@ const Pkg: React.FC<PkgProps> = ({ item }) => {
               <Label htmlFor={`subscription${item.id}`}>Subscribe</Label>
             </div>
             <div className="flex items-center space-x-2">
-              <RadioGroupItem value="onetime" id={`onetime${item.id}`} />
+              <RadioGroupItem value="one-time" id={`one-time${item.id}`} />
               <Label htmlFor={`onetime${item.id}`}>One time</Label>
             </div>
-            <div className="flex items-center space-x-2">
+            {/* <div className="flex items-center space-x-2">
               <RadioGroupItem value="gift" id={`gift${item.id}`} />
               <Label htmlFor={`gift${item.id}`}>This is a gift</Label>
-            </div>
+            </div> */}
           </RadioGroup>
         </div>
       </div>
