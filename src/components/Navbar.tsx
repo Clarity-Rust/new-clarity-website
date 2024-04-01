@@ -105,12 +105,6 @@ const Navbar: React.FC = () => {
               Logout
             </Button>
           )}
-          {/* <Button asChild>
-        <Link to="https://discord.gg/clarityrust">Discord</Link>
-      </Button>
-      <Button asChild>
-        <Link to="https://steamcommunity.com/groups/clarityrust">Steam</Link>
-      </Button> */}
         </div>
       </div>
     </nav>

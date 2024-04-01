@@ -96,16 +96,22 @@ const Store: React.FC = () => {
           return 0;
         }
       });
-
-      return items;
     }
   }, [items, filter]);
 
   return (
-    <div className="flex flex-col gap-4 p-4 bg-neutral-800 min-h-screen"> {/* Ensures min-height covers the viewport */}
-      <h1 className="text-3xl text-white">Welcome to the Store!</h1>
+    <div className="flex min-h-screen flex-col gap-4 bg-neutral-800 p-4">
+      <h1 className="text-3xl text-white">
+        Welcome to the Clarity Rust Store!
+      </h1>
+      <p className="w-1/2 font-medium">
+        Here you can purchase packages to support the server and gain access to
+        exclusive perks. We offer monthly and lifetime packages. You can also
+        buy one month of a monthly package to try it out before committing to a
+        subscription (One-time).
+      </p>
       <Filter filter={filter} setFilter={setFilter} />
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"> {/* Removed h-screen */}
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
         {isLoading ? (
           <div className="col-span-1 flex h-64 items-center justify-center sm:col-span-2 md:col-span-3 lg:col-span-4 xl:col-span-5">
             <div className="text-lg font-semibold text-gray-400">

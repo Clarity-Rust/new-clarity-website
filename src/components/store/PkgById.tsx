@@ -8,7 +8,8 @@ const PkgById: React.FC<{ id: string }> = ({ id }) => {
   const [pkg, setPkg] = useState<Package>();
   const { toast } = useToast();
   const { sharedState, setSharedState } = useAppContext();
-  const navigate = useNavigate(); 
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     // fetch package by id
@@ -50,22 +51,22 @@ const PkgById: React.FC<{ id: string }> = ({ id }) => {
     });
     const data = await response.json();
     console.log(data);
-  
+
     const updatedPackages = sharedState.packages.filter((pkg) => pkg !== id);
-  
-    setSharedState(prevState => ({
+
+    setSharedState((prevState) => ({
       ...prevState,
       packages: updatedPackages,
     }));
-  
+
     localStorage.setItem("packages", updatedPackages.join(","));
-  
+
     toast({
       description: `Item removed from cart`,
       className: "dark",
     });
-  
-    navigate(0); 
+
+    navigate(0);
   };
 
   return (
@@ -81,7 +82,6 @@ const PkgById: React.FC<{ id: string }> = ({ id }) => {
         </>
       )}
       {pkg && <button onClick={() => removeFromCart(pkg.id)}>Remove</button>}
-
     </div>
   );
 };

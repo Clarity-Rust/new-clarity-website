@@ -14,6 +14,7 @@ import Faq from "./components/Faq";
 import Staff from "./components/Staff";
 import { Toaster } from "./components/ui/toaster";
 import Leaderboard from "./components/Leaderboard";
+import "./App.css";
 
 const AppContent: React.FC = () => {
   const location = useLocation();
