@@ -9,8 +9,6 @@ const PkgById: React.FC<{ id: string }> = ({ id }) => {
   const { toast } = useToast();
   const { sharedState, setSharedState } = useAppContext();
 
-  const navigate = useNavigate();
-
   useEffect(() => {
     // fetch package by id
     const url = `https://headless.tebex.io/api/accounts/${
@@ -49,7 +47,14 @@ const PkgById: React.FC<{ id: string }> = ({ id }) => {
       },
       body: JSON.stringify({ package_id: id }),
     });
-    const data = await response.json();
+
+    if (!response.ok) {
+      toast({
+        description: `${data.error}`,
+        className: "dark",
+      });
+      return;
+    }
 
     const updatedPackages = sharedState.packages.filter((pkg) => pkg !== id);
 
@@ -58,7 +63,7 @@ const PkgById: React.FC<{ id: string }> = ({ id }) => {
       packages: updatedPackages,
     }));
 
-    localStorage.setItem("packages", updatedPackages.join(","));
+    localStorage.setItem("packages", JSON.stringify(updatedPackages));
 
     toast({
       description: `Item removed from cart`,

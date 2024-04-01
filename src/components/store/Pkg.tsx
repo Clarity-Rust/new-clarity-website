@@ -11,11 +11,21 @@ import { Button } from "@/components/ui/button";
 import { FaCartPlus } from "react-icons/fa";
 import { useState } from "react";
 import { Checkbox } from "../ui/checkbox";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../ui/dialog";
+import { Input } from "@/components/ui/input";
 
 const Pkg: React.FC<PkgProps> = ({ item }) => {
   const { toast } = useToast();
   const { sharedState, setSharedState } = useAppContext();
   const [selectedOption, setSelectedOption] = useState<string>("one-time");
+  const [giftId, setGiftId] = useState<string>("");
 
   const handleAddToCart = (oneChoice = false) => {
     if (oneChoice === true) {
@@ -63,13 +73,55 @@ const Pkg: React.FC<PkgProps> = ({ item }) => {
     }
 
     const json = await res.json();
-    setSharedState({ ...sharedState, packages: [...sharedState.packages, id] });
-    localStorage.setItem("packages", [...sharedState.packages, id].join(","));
-    const subscriptionType = type ? "Subscription" : "single";
+    console.log(json);
+
+    // Retrieve the current packages from localStorage, parse it, or initialize an empty array if it doesn't exist
+    const currentPackages = JSON.parse(
+      localStorage.getItem("packages") || "[]",
+    );
+
+    // Update the packages list with the new package id
+    const updatedPackages = [...currentPackages, id];
+
+    // Update the shared state
+    setSharedState((prevState) => ({
+      ...prevState,
+      packages: updatedPackages,
+    }));
+
+    // Store the updated packages list in localStorage in JSON format
+    localStorage.setItem("packages", JSON.stringify(updatedPackages));
+
     toast({
-      description: `${json.data.packages.at(-1).name} - ${subscriptionType} added to cart`,
+      description: `${json.data.packages.at(-1).name} (${type || "default"}) added to cart`,
       className: "dark",
     });
+  };
+
+  const GiftDialog = () => {
+    return (
+      <Dialog>
+        <DialogTrigger className="dark flex-1 rounded-sm bg-gray-800 text-sm">
+          Enter steam id
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Enter your friend's steam ID.</DialogTitle>
+            <DialogDescription className="flex gap-1">
+              <Input />
+              <Button
+                onClick={() => {
+                  handleAddToCart(item.type === "single");
+                }}
+                className="dark bg-green-400"
+              >
+                Okay
+              </Button>
+            </DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
+    );
   };
 
   return (
@@ -84,12 +136,14 @@ const Pkg: React.FC<PkgProps> = ({ item }) => {
       <div className="mb-4 flex flex-col gap-2">
         <div className="flex  gap-2">
           <Checkbox
-            id="isGift"
-            onChange={() => setSelectedOption("gift")}
+            id={`isGift${item.id}`}
+            onCheckedChange={(value) => {
+              setSelectedOption(value ? "gift" : "one-time");
+            }}
             className="dark"
           />
           <label
-            htmlFor="isGift"
+            htmlFor={`isGift${item.id}`}
             className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
           >
             This is a gift
@@ -98,13 +152,14 @@ const Pkg: React.FC<PkgProps> = ({ item }) => {
         {item.type === "both" && (
           <div className="flex items-center gap-2">
             <Checkbox
-              id="isSubscription"
-              checked={selectedOption === "subscription"}
-              onChange={() => setSelectedOption("subscription")}
+              id={`isSubscription${item.id}`}
+              onCheckedChange={(value) => {
+                setSelectedOption(value ? "subscription" : "one-time");
+              }}
               className="dark"
             />
             <label
-              htmlFor="isSubscription"
+              htmlFor={`isSubscription${item.id}`}
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
               Subscribe
@@ -113,18 +168,22 @@ const Pkg: React.FC<PkgProps> = ({ item }) => {
         )}
       </div>
       <div className="flex justify-between gap-2">
-        <Button
-          variant="outline"
-          onClick={() => {
-            handleAddToCart(item.type === "single");
-          }}
-          className="dark mb-4 flex-1 bg-green-600"
-        >
-          <span className="mr-2">
-            <FaCartPlus size={23} />
-          </span>
-          Add to cart
-        </Button>
+        {selectedOption === "gift" ? (
+          <GiftDialog />
+        ) : (
+          <Button
+            variant="outline"
+            onClick={() => {
+              handleAddToCart(item.type === "single");
+            }}
+            className="dark flex-1 bg-green-600"
+          >
+            <span className="mr-2">
+              <FaCartPlus size={23} />
+            </span>
+            Add to cart
+          </Button>
+        )}
         <Popover>
           <PopoverTrigger asChild>
             <Button variant="outline" className="dark bg-blue-500">

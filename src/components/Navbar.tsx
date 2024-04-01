@@ -2,7 +2,16 @@ import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { useAppContext } from "@/context/AppContext";
 import { useEffect } from "react";
 import { Button } from "./ui/button";
-import { IoIosLogIn } from "react-icons/io";
+import { IoIosLogIn, IoIosArrowDropdown } from "react-icons/io";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
 
 const Navbar: React.FC = () => {
   const { sharedState, setSharedState } = useAppContext();
@@ -19,10 +28,8 @@ const Navbar: React.FC = () => {
       authURL: "",
       packages: [],
     });
-    // Clear local storage
     localStorage.clear();
 
-    // Redirect to home
     navigate("/");
   };
 
@@ -30,7 +37,6 @@ const Navbar: React.FC = () => {
     const handleUrlChange = async () => {
       const queryParam = searchParams.get("authed");
       if (queryParam === "true") {
-        // Re-call basket endpoint to get username
         const url = `https://headless.tebex.io/api/accounts/${import.meta.env.VITE_WEBSTORE_IDENT}/baskets/${sharedState.basketIdent}`;
         const response = await fetch(url, {
           method: "GET",
@@ -46,17 +52,52 @@ const Navbar: React.FC = () => {
         }));
         localStorage.setItem("authenticated", "true");
         localStorage.setItem("username", data.data.username);
-        // No need to update packages here if they are managed elsewhere
       }
     };
 
     handleUrlChange();
   }, [searchParams, setSharedState, sharedState]);
 
+  function ProfileMenu() {
+    return (
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild className="dark">
+          <Button variant="outline" className="flex gap-2">
+            Hello, {sharedState.username}{" "}
+            <span>
+              {" "}
+              <IoIosArrowDropdown size={23} />{" "}
+            </span>{" "}
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="dark w-56">
+          <DropdownMenuLabel>Contact Us</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuGroup>
+            <DropdownMenuItem>
+              <Link to="discord.com"> Discord </Link>{" "}
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <Link to="discord.com"> Steam </Link>
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            onClick={() => {
+              logout();
+            }}
+          >
+            Log out
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    );
+  }
+
   const Profile: React.FC = () => (
     <div>
       {sharedState.authenticated ? (
-        <span>Hello, {sharedState.username}</span>
+        <ProfileMenu />
       ) : (
         <Link className="flex gap-1" to={sharedState.authURL}>
           Login to purchase items
@@ -82,8 +123,7 @@ const Navbar: React.FC = () => {
       <div className="flex w-full items-center justify-between">
         <div className="flex items-center gap-4">
           <Link to="/" className="flex gap-2">
-            <img src="/clarity-logo.svg" alt="logo" className="h-10" />
-            <img src="/clarity-text.svg" alt="logo" className="h-10" />
+            <img src="/clarity-text.svg" alt="logo" className="h-10 " />
           </Link>
           <Link to="/store">Store</Link>
           <Link to="/staff">Staff</Link>
@@ -93,11 +133,6 @@ const Navbar: React.FC = () => {
         <div className="flex items-center gap-4">
           <Cart />
           <Profile />
-          {sharedState.authenticated && (
-            <Button variant="destructive" onClick={logout}>
-              Logout
-            </Button>
-          )}
         </div>
       </div>
     </nav>
