@@ -2,7 +2,6 @@ import { PkgProps } from "@/types";
 import { useToast } from "../ui/use-toast";
 import { useAppContext } from "@/context/AppContext";
 import { CiCircleInfo } from "react-icons/ci";
-import { BsArrowRepeat } from "react-icons/bs";
 import {
   Popover,
   PopoverContent,
@@ -10,22 +9,27 @@ import {
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { FaCartPlus } from "react-icons/fa";
+import { useState } from "react";
+import { Checkbox } from "../ui/checkbox";
 
 const Pkg: React.FC<PkgProps> = ({ item }) => {
   const { toast } = useToast();
   const { sharedState, setSharedState } = useAppContext();
+  const [isGift, setIsGift] = useState(false);
+  const [isSubscription, setIsSubscription] = useState(false);
 
   const addToCart = async (
     id: string,
     type: string | undefined = undefined,
   ) => {
     const url = `https://headless.tebex.io/api/baskets/${sharedState.basketIdent}/packages`;
+
     interface RequestBody {
       package_id: string;
       type?: string;
     }
-    let body: RequestBody = { package_id: id };
 
+    let body: RequestBody = { package_id: id };
     if (type) {
       body = { ...body, type: type };
     }
@@ -57,8 +61,14 @@ const Pkg: React.FC<PkgProps> = ({ item }) => {
       className: "dark",
     });
   };
+
+  const handleAddToCart = () => {
+    const type = isSubscription ? "subscription" : undefined;
+    addToCart(item.id, type);
+  };
+
   return (
-    <div className="rounded-lg bg-slate-800 p-6 text-white shadow-lg">
+    <div className="rounded-lg bg-slate-800 p-4 text-white shadow-lg">
       <img
         src={item.imageURL}
         alt={item.name}
@@ -66,59 +76,61 @@ const Pkg: React.FC<PkgProps> = ({ item }) => {
       />
       <h3 className="mb-2 text-2xl font-bold">{item.name}</h3>
       <div className="text-md mb-4 font-semibold">${item.price}</div>
-      <div className="mb-4 flex flex-col gap-1">
-        {item.type === "both" ? (
-          <>
-            <Button
-              variant="outline"
-              onClick={() => addToCart(item.id, "single")}
-              className="dark flex-1"
-            >
-              <span className="mr-2">
-                <FaCartPlus size={18} />
-              </span>
-              One-time
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => addToCart(item.id, "subscription")}
-              className="dark flex-1"
-            >
-              <span className="mr-2">
-                <BsArrowRepeat size={18} />
-              </span>
-              Subscribe
-            </Button>
-          </>
-        ) : (
-          <Button
-            variant="outline"
-            onClick={() => addToCart(item.id)}
-            className="dark flex-1"
-          >
-            <span className="mr-2">
-              <FaCartPlus size={18} />
-            </span>
-            Add to Cart
-          </Button>
-        )}
-      </div>
-      <Popover>
-        <PopoverTrigger asChild>
-          <Button variant="outline" className="dark ">
-            <span className="flex gap-1">
-              <CiCircleInfo size={18} />
-              View kit details
-            </span>
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className="w-100 dark h-80 overflow-y-auto p-4">
-          <div
-            className="prose dark:prose-invert"
-            dangerouslySetInnerHTML={{ __html: item.innerhtml }}
+      <div className="mb-4 flex flex-col gap-2">
+        <div className="flex  gap-2">
+          <Checkbox
+            id="isGift"
+            onChange={(e) => setIsGift(e.target.checked)}
+            className="dark"
           />
-        </PopoverContent>
-      </Popover>
+          <label
+            htmlFor="isGift"
+            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+          >
+            This is a gift
+          </label>
+        </div>
+        <div className="flex items-center gap-2">
+          <Checkbox
+            id="isSubscription"
+            onChange={(e) => setIsSubscription(e.target.checked)}
+            className="dark"
+          />
+          <label
+            htmlFor="isSubscription"
+            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+          >
+            Subscribe
+          </label>
+        </div>
+      </div>
+      <div className="flex justify-between gap-2">
+        <Button
+          variant="outline"
+          onClick={handleAddToCart}
+          className="dark mb-4 flex-1 bg-green-600"
+        >
+          <span className="mr-2">
+            <FaCartPlus size={23} />
+          </span>
+          Add to cart
+        </Button>
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="outline" className="dark bg-blue-500">
+              <span className="flex gap-1">
+                <CiCircleInfo size={23} />
+              </span>
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-100 dark h-80 overflow-y-auto p-4">
+            <div
+              className="prose dark:prose-invert"
+              dangerouslySetInnerHTML={{ __html: item.innerhtml }}
+            />
+          </PopoverContent>
+        </Popover>
+      </div>
     </div>
   );
 };
