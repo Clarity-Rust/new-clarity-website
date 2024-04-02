@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Package } from "@/types";
+import { Package, Gift } from "@/types";
 import { useToast } from "../ui/use-toast";
 import { useAppContext } from "@/context/AppContext";
-import { useNavigate } from "react-router-dom";
+import { Popover, PopoverTrigger, PopoverContent } from "../ui/popover"; // Assume these are imported correctly
+import { FaTrash } from "react-icons/fa";
+import { CiCircleInfo } from "react-icons/ci";
+import { Button } from "../ui/button";
 
-const PkgById: React.FC<{ id: string }> = ({ id }) => {
+const PkgById: React.FC<{ id: string; gift?: Gift }> = ({ id, gift }) => {
   const [pkg, setPkg] = useState<Package>();
   const { toast } = useToast();
   const { sharedState, setSharedState } = useAppContext();
@@ -50,7 +53,7 @@ const PkgById: React.FC<{ id: string }> = ({ id }) => {
 
     if (!response.ok) {
       toast({
-        description: `${data.error}`,
+        description: `${response.statusText}`,
         className: "dark",
       });
       return;
@@ -71,19 +74,48 @@ const PkgById: React.FC<{ id: string }> = ({ id }) => {
     });
   };
 
-  return (
-    <div>
-      {pkg && (
-        <>
-          <h2>{pkg.name}</h2>
-          <p>ID: {pkg.id}</p>
-          <p>Description: {pkg.innerhtml}</p>
-          <img src={pkg.imageURL} alt={pkg.name} />
-          <p>Price: {pkg.price}</p>
-          <p>Type: {pkg.type}</p>
-        </>
-      )}
-      {pkg && <button onClick={() => removeFromCart(pkg.id)}>Remove</button>}
+  return pkg ? (
+    <div className="mt-2 flex min-h-[200px] w-full items-center overflow-hidden bg-[#333342] p-4 text-white shadow-lg">
+      <img
+        src={pkg.imageURL}
+        alt={pkg.name}
+        className="rounded-lg object-fill"
+        width={150}
+        height={150}
+      />
+      <div className="ml-4 flex-1">
+        <h3 className="text-2xl font-bold">{pkg.name}</h3>
+        <p className="text-md font-semibold">${pkg.price}</p>
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="outline" className="dark mt-2 bg-blue-500">
+              <CiCircleInfo size={23} />
+              <span>More Info</span>
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="dark h-80 w-96 overflow-y-auto p-4">
+            <div
+              className="prose dark:prose-invert"
+              dangerouslySetInnerHTML={{ __html: pkg.innerhtml }}
+            />
+          </PopoverContent>
+        </Popover>
+        {gift && "this is a gift"}
+      </div>
+      <div className="flex items-center gap-2">
+        <Button
+          variant="outline"
+          onClick={() => removeFromCart(pkg.id)}
+          className="dark flex items-center gap-1 bg-red-600"
+        >
+          <FaTrash size={20} />
+          <span>Remove</span>
+        </Button>
+      </div>
+    </div>
+  ) : (
+    <div className="flex min-h-[250px] w-full items-center justify-center overflow-hidden bg-[#333342] p-4 text-white shadow-lg">
+      <p>Loading package data or package not found...</p>
     </div>
   );
 };

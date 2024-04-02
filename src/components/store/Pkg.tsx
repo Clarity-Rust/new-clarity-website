@@ -10,7 +10,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { FaCartPlus } from "react-icons/fa";
 import { useState } from "react";
-import { Checkbox } from "../ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   Dialog,
   DialogContent,
@@ -25,6 +26,7 @@ const Pkg: React.FC<PkgProps> = ({ item }) => {
   const { toast } = useToast();
   const { sharedState, setSharedState } = useAppContext();
   const [selectedOption, setSelectedOption] = useState<string>("one-time");
+  const [steamId, setSteamId] = useState<string>("");
 
   const handleAddToCart = (oneChoice = false) => {
     if (oneChoice === true) {
@@ -58,6 +60,8 @@ const Pkg: React.FC<PkgProps> = ({ item }) => {
     if (target_username) {
       body = { ...body, target_username_id: target_username };
     }
+
+    console.log(body);
 
     const res = await fetch(url, {
       method: "POST",
@@ -98,83 +102,74 @@ const Pkg: React.FC<PkgProps> = ({ item }) => {
     localStorage.setItem("packages", JSON.stringify(updatedPackages));
 
     toast({
-      description: `${json.data.packages.at(-1).name} (${type || "default"}) added to cart`,
+      description: `${json.data.packages.at(-1).name} (${type || "default"}) ${target_username !== undefined ? "gifted" : "added to cart"}`,
       className: "dark",
     });
   };
 
-  const GiftDialog = () => {
-    return (
-      <Dialog>
-        <DialogTrigger className="dark flex-1 rounded-sm bg-gray-800 text-sm">
-          Enter Steam ID
-        </DialogTrigger>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Enter your friend's Steam ID.</DialogTitle>
-            <DialogDescription className="flex gap-1">
-              <Input oncha />
-              <Button
-                onClick={() => {
-                  addToCart(item.id, "single");
-                }}
-                className="dark bg-slate-400"
-              >
-                Submit
-              </Button>
-            </DialogDescription>
-          </DialogHeader>
-        </DialogContent>
-      </Dialog>
-    );
-  };
-
   return (
-    <div className="rounded-lg bg-[#333342] p-4 text-white shadow-lg">
+    <div className="min-w-[250px] max-w-[350px] overflow-auto rounded-lg bg-[#333342] p-4 text-white shadow-lg">
       <img
         src={item.imageURL}
         alt={item.name}
-        className="mb-4 h-48 w-full rounded-lg object-cover"
+        className="mb-4 h-48 w-full rounded-lg object-fill"
       />
       <h3 className="mb-2 text-2xl font-bold">{item.name}</h3>
       <div className="text-md mb-4 font-semibold">${item.price}</div>
       <div className="mb-4 flex flex-col gap-2">
         <div className="flex gap-2">
-          <Checkbox
-            id={`isGift${item.id}`}
-            onCheckedChange={(value) => {
-              setSelectedOption(value ? "gift" : "one-time");
-            }}
+          <RadioGroup
+            defaultValue="subscription"
             className="dark"
-          />
-          <label
-            htmlFor={`isGift${item.id}`}
-            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            onValueChange={(value) => setSelectedOption(value)}
           >
-            This is a gift
-          </label>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem
+                value="subscription"
+                id={`subscription${item.id}`}
+              />
+              <Label htmlFor={`subscription${item.id}`}>Subscribe</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="one-time" id={`one-time${item.id}`} />
+              <Label htmlFor={`onetime${item.id}`}>One time</Label>
+            </div>
+            {/* <div className="flex items-center space-x-2">
+              <RadioGroupItem value="gift" id={`gift${item.id}`} />
+              <Label htmlFor={`gift${item.id}`}>This is a gift</Label>
+            </div> */}
+          </RadioGroup>
         </div>
-        {item.type === "both" && (
-          <div className="flex items-center gap-2">
-            <Checkbox
-              id={`isSubscription${item.id}`}
-              onCheckedChange={(value) => {
-                setSelectedOption(value ? "subscription" : "one-time");
-              }}
-              className="dark"
-            />
-            <label
-              htmlFor={`isSubscription${item.id}`}
-              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-            >
-              Subscribe
-            </label>
-          </div>
-        )}
       </div>
       <div className="flex justify-between gap-2">
         {selectedOption === "gift" ? (
-          <GiftDialog />
+          <Dialog>
+            <DialogTrigger className="dark flex-1 rounded-sm bg-gray-800 text-sm">
+              Enter Steam ID
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Enter your friend's Steam ID.</DialogTitle>
+                <DialogDescription className="flex w-full max-w-sm items-center space-x-2">
+                  <Input
+                    onChange={(e) => {
+                      setSteamId(e.target.value);
+                    }}
+                    type="number"
+                    placeholder="76561198..."
+                  />
+                  <Button
+                    onClick={() => {
+                      addToCart(item.id, "single", steamId);
+                    }}
+                    className="dark bg-slate-400"
+                  >
+                    Submit
+                  </Button>
+                </DialogDescription>
+              </DialogHeader>
+            </DialogContent>
+          </Dialog>
         ) : (
           <Button
             variant="outline"

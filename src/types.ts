@@ -15,6 +15,12 @@ export interface Package {
   type: string;
 }
 
+export interface Gift {
+  package_id: string;
+  gift_username_id: string;
+  gift_username: string;
+}
+
 export interface Basket {
   packages?: string[];
   id: string;

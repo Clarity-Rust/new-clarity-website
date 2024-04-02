@@ -1,6 +1,7 @@
 import { Package, SearchFilters } from "@/types";
 import { useState, useEffect } from "react";
 import { useMemo } from "react";
+import { ReloadIcon } from "@radix-ui/react-icons";
 
 import Pkg from "./Pkg";
 import {
@@ -115,7 +116,7 @@ const Store: React.FC = () => {
         {isLoading ? (
           <div className="col-span-1 flex h-64 items-center justify-center sm:col-span-2 md:col-span-3 lg:col-span-4 xl:col-span-5">
             <div className="text-lg font-semibold text-gray-400">
-              Loading...
+              <ReloadIcon className="h-20 w-20 animate-spin"></ReloadIcon>
             </div>
           </div>
         ) : (

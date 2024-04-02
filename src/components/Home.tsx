@@ -13,13 +13,12 @@ const Home: React.FC = () => {
           <Button size="lg" className="bg-amber-600" asChild>
             <Link to="/store"> Store </Link>
           </Button>
-          <Button size="lg" className="bg-gray-800" asChild>
+          <Button size="lg" className="bg-[#171a21]" asChild>
             <Link to="https://steamcommunity.com/groups/clarityrust">
-              {" "}
-              Steam{" "}
+              Steam
             </Link>
           </Button>
-          <Button size="lg" className="bg-blue-800" asChild>
+          <Button size="lg" className="bg-[#7289da]" asChild>
             <Link to="https://discord.gg/clarityrust"> Discord </Link>
           </Button>
         </div>
