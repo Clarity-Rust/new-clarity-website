@@ -9,7 +9,9 @@ import { ScrollArea } from "../ui/scroll-area";
 const Cart: React.FC = () => {
   // @ts-expect-error how can i ignore this
   const { sharedState, setSharedState } = useAppContext();
+  // @ts-expect-error how can i ignore this
   const [checkoutAllowed, setCheckoutAllowed] = useState<boolean>(true); // assume everything is ok first
+  // @ts-expect-error how can i ignore this
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [gifts, setGifts] = useState<Gift[]>([]);
 

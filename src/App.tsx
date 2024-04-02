@@ -1,10 +1,5 @@
 import React from "react";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  useLocation,
-} from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AppProvider } from "./context/AppContext";
 import Navbar from "./components/Navbar";
 import Home from "./components/Home";
@@ -17,14 +12,6 @@ import Leaderboard from "./components/Leaderboard";
 import "./App.css";
 
 const AppContent: React.FC = () => {
-  const location = useLocation();
-
-  const isHomePage = location.pathname === "/";
-
-  const appStyle = isHomePage
-    ? { OverflowX: "hidden", OverflowY: "hidden", height: "100vh" }
-    : {};
-
   return (
     <div className="App min-h-fit bg-[#292930] text-white">
       <Navbar />
