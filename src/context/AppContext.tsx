@@ -54,7 +54,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
 
         // now generate auth url
         const encodedURL = encodeURIComponent(
-          "http://localhost:5173/store?authed=true",
+          "http://clarityrust.gg/store?authed=true",
         );
         const authUrl = `https://headless.tebex.io/api/accounts/${import.meta.env.VITE_WEBSTORE_IDENT}/baskets/${jsonData.data.ident}/auth?returnUrl=${encodedURL}`;
         const authResponse = await fetch(authUrl, {
