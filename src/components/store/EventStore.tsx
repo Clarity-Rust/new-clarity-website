@@ -51,10 +51,10 @@ const Filter: React.FC<{
   );
 };
 
-const Store: React.FC = () => {
+const EventStore: React.FC = () => {
   const [items, setItems] = useState<Package[]>([]);
-  const [filter, setFilter] = useState<SearchFilters>({ type: "all", server: "rust"});
-  const [isLoading, setIsLoading] = useState<boolean>(true); // Initialize loading state
+  const [filter, setFilter] = useState<SearchFilters>({ type: "all", server: ""});
+  const [isLoading, setIsLoading] = useState<boolean>(true); 
 
   const fetchData = async () => {
     setIsLoading(true); // Start loading
@@ -124,10 +124,7 @@ const Store: React.FC = () => {
         Welcome to the Clarity Rust Store!
       </h1>
       <p className="w-1/2 font-medium">
-        Here you can purchase packages to support the server and gain access to
-        exclusive perks. We offer monthly and lifetime packages. You can also
-        buy one month of a monthly package to try it out before committing to a
-        subscription (One-time).
+        Here you can purchase packages during events to support your favorite streamers. Packages are sorted by streamer name. (add better description here) 
       </p>
       <Filter filter={filter} setFilter={setFilter} />
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
@@ -147,4 +144,4 @@ const Store: React.FC = () => {
   );
 };
 
-export default Store;
+export default EventStore;

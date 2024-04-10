@@ -54,4 +54,5 @@ export interface SearchFilters {
   type: string;
   sort?: "asc" | "desc";
   sortBy?: "price";
+  server: string;
 }
