@@ -104,6 +104,7 @@ const Store: React.FC = () => {
     <div className="flex min-h-screen flex-col gap-4 bg-[#292930] p-4 ">
       <h1 className="text-3xl text-white">
         Welcome to the Clarity Rust Store!
+        {import.meta.env.MODE}
       </h1>
       <p className="w-1/2 font-medium">
         Here you can purchase packages to support the server and gain access to
