@@ -1,4 +1,3 @@
-// components/Home.tsx
 const Faq: React.FC = () => {
   return (
     <div className="p-4">

@@ -16,17 +16,10 @@ const Filter: React.FC<{
   filter: SearchFilters;
   setFilter: (filter: SearchFilters) => void;
 }> = ({ filter, setFilter }) => {
-  // const [categories, setCategories] = useState<Category[]>([]);
-  const catLookup: Record<string, string> = {
-    "2xlifetime": "2639946",
-    "2xmonthly": "2634939",
-    "5xmonthly": "2651821",
-    "5xlifetime": "2651822",
-  };
+  const [categories, setCategories] = useState<Category[]>([]);
+  // useeffect hook to only get events category
+  // replace dropdown with populated state of streamers
 
-  // useeffect hook to get categories to populate dropdown
-  // replace dropdown with populated state of categories (minus the event category)
-  // also need to remove packages with category "event" from the items state
   useEffect(() => {
     const fetchData = async () => {
       const apiUrl = `https://headless.tebex.io/api/accounts/${
@@ -38,49 +31,42 @@ const Filter: React.FC<{
       });
       const jsonData = await response.json();
       const categoriesData = jsonData.data.filter(
-        (cat: any) => cat.name !== "Event"
+        (cat: any) => cat.parent !== null && cat.parent.name === "Event"
       );
+      setCategories(categoriesData);
 
-      // Initialize a local array to accumulate updates
-      const newCategories: Category[] = [];
-      categoriesData.forEach((cat: any) => {
-        if (cat.parent === null) {
-          newCategories.push({ id: cat.id, name: cat.name });
-        }
-      });
-
-      // Update the state once with the accumulated updates
-      // setCategories(newCategories);
+      // Automatically set filter to the first category if not already set
+      if (categories.length > 0 && filter.server === "") {
+        setFilter({ ...filter, server: categories[0].id });
+      }
     };
 
-    // Initialize state to empty at the start of fetchData to prevent duplicates on re-render
-    // setCategories([]);
-
     fetchData().catch(console.error);
-  }, []);
+  }, [filter, setFilter]);
 
   return (
-    <div className="flex gap-2">
-      <h2> Package Type: </h2>
+    <div className="flex gap-2 justify-center">
+      <h2>Filter by streamer: </h2>
       <Select
-        value={filter.server === "" ? "2639946" : filter.server}
+        value={filter.server}
         onValueChange={(value) => setFilter({ ...filter, server: value })}
       >
         <SelectTrigger className="w-[180px]">
-          <SelectValue placeholder="Choose category" />
+          <SelectValue placeholder="Choose package type" />
         </SelectTrigger>
         <SelectContent className="dark">
-          <SelectItem value={catLookup["2xlifetime"]}>2x Lifetime</SelectItem>
-          <SelectItem value={catLookup["2xmonthly"]}>2x Monthly</SelectItem>
-          <SelectItem value={catLookup["5xlifetime"]}>5x Lifetime</SelectItem>
-          <SelectItem value={catLookup["5xmontly"]}>5x Monthly</SelectItem>
+          {categories.map((category) => (
+            <SelectItem key={category.id} value={category.id}>
+              {category.name}
+            </SelectItem>
+          ))}
         </SelectContent>
       </Select>
     </div>
   );
 };
 
-const Store: React.FC = () => {
+const EventStore: React.FC = () => {
   const [items, setItems] = useState<Package[]>([]);
   const [filter, setFilter] = useState<SearchFilters>({
     type: "all",
@@ -128,13 +114,12 @@ const Store: React.FC = () => {
   return (
     <div className="flex min-h-screen flex-col gap-4 bg-[#292930] p-4 ">
       <h1 className="text-3xl text-white">
-        Welcome to the Clarity Rust Store!
+        Welcome to the Clarity Rust Event Store!
       </h1>
       <p className="w-1/2 font-medium">
-        Here you can purchase packages to support the server and gain access to
-        exclusive perks. We offer monthly and lifetime packages. You can also
-        buy one month of a monthly package to try it out before committing to a
-        subscription (One-time).
+        Here you can purchase packages during events to support your favorite
+        streamers. Packages are sorted by streamer name. (add better description
+        here)
       </p>
       <Filter filter={filter} setFilter={setFilter} />
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
@@ -151,7 +136,7 @@ const Store: React.FC = () => {
               showDesc="showPop"
               item={item}
               key={item.id}
-              showChecks={item.type !== "single"}
+              showChecks={false}
             />
           ))
         )}
@@ -160,4 +145,4 @@ const Store: React.FC = () => {
   );
 };
 
-export default Store;
+export default EventStore;

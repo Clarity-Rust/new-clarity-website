@@ -7,8 +7,10 @@ import Store from "./components/store/Store";
 import Cart from "./components/store/Cart";
 import Faq from "./components/Faq";
 import Staff from "./components/Staff";
+import EventStore from "./components/store/EventStore";
 import { Toaster } from "./components/ui/toaster";
 import Leaderboard from "./components/Leaderboard";
+import PageNotFound from "./components/404";
 import "./App.css";
 
 const AppContent: React.FC = () => {
@@ -22,18 +24,19 @@ const AppContent: React.FC = () => {
         <Route path="/store" element={<Store />} />
         <Route path="/staff" element={<Staff />} />
         <Route path="/faq" element={<Faq />} />
+        <Route path="/store/event" element={<EventStore />} />
+        <Route path="*" element={<PageNotFound />} />
       </Routes>
       <Toaster />
     </div>
   );
 };
 
-// Modify the App component to include the Router and AppProvider
 const App: React.FC = () => {
   return (
     <AppProvider>
       <Router>
-        <AppContent /> {/* Use the new AppContent component */}
+        <AppContent /> 
       </Router>
     </AppProvider>
   );
