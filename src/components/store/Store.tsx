@@ -2,6 +2,7 @@ import { Package, SearchFilters } from "@/types";
 import { useState, useEffect } from "react";
 import { useMemo } from "react";
 import { ReloadIcon } from "@radix-ui/react-icons";
+import { Category } from "@/types";
 
 import Pkg from "./Pkg";
 import {
@@ -16,48 +17,87 @@ const Filter: React.FC<{
   filter: SearchFilters;
   setFilter: (filter: SearchFilters) => void;
 }> = ({ filter, setFilter }) => {
-  
-  
+  const [categories, setCategories] = useState<Category[]>([]);
+
+  // useeffect hook to get categories to populate dropdown
+  // replace dropdown with populated state of categories (minus the event category)
+  // also need to remove packages with category "event" from the items state
+  useEffect(() => {
+    const fetchData = async () => {
+      const apiUrl = `https://headless.tebex.io/api/accounts/${
+        import.meta.env.VITE_WEBSTORE_IDENT
+      }/categories`;
+      const response = await fetch(apiUrl, {
+        method: "GET",
+        headers: { Accept: "application/json" },
+      });
+      const jsonData = await response.json();
+      const categoriesData = jsonData.data.filter(
+        (cat: any) => cat.name !== "Event"
+      );
+
+      // Initialize a local array to accumulate updates
+      const newCategories: Category[] = [];
+      categoriesData.forEach((cat: any) => {
+        if (cat.parent === null) {
+          newCategories.push({ id: cat.id, name: cat.name });
+        }
+      });
+
+      // Update the state once with the accumulated updates
+      setCategories(newCategories);
+    };
+
+    // Initialize state to empty at the start of fetchData to prevent duplicates on re-render
+    setCategories([]);
+
+    fetchData().catch(console.error);
+  }, []);
+
   return (
     <div className="flex gap-2">
-
-    <Select
-      value={filter.type}
-      onValueChange={(value) => setFilter({ ...filter, type: value })}
-    >
-      <SelectTrigger className="w-[180px]">
-        <SelectValue placeholder="Choose package type" />
-      </SelectTrigger>
-      <SelectContent className="dark">
-        <SelectItem value="lifetime">Lifetime</SelectItem>
-        <SelectItem value="monthly">Monthly</SelectItem>
-        <SelectItem value="all">All</SelectItem>
-      </SelectContent>
-    </Select>
-    <Select
-      value={filter.type}
-      onValueChange={(value) => setFilter({ ...filter, type: value })}
-    >
-      <SelectTrigger className="w-[180px]">
-        <SelectValue placeholder="Choose package type" />
-      </SelectTrigger>
-      <SelectContent className="dark">
-        <SelectItem value="lifetime">Lifetime</SelectItem>
-        <SelectItem value="monthly">Monthly</SelectItem>
-        <SelectItem value="all">All</SelectItem>
-      </SelectContent>
-    </Select>
+      <h2> Package Type: </h2>
+      <Select
+        value={filter.type}
+        onValueChange={(value) => setFilter({ ...filter, type: value })}
+      >
+        <SelectTrigger className="w-[180px]">
+          <SelectValue placeholder="Choose package type" />
+        </SelectTrigger>
+        <SelectContent className="dark">
+          <SelectItem value="lifetime">Lifetime</SelectItem>
+          <SelectItem value="monthly">Monthly</SelectItem>
+          <SelectItem value="all">All</SelectItem>
+        </SelectContent>
+      </Select>
+      <h2> Choose server: </h2>
+      <Select
+        value={filter.server}
+        onValueChange={(value) => setFilter({ ...filter, server: value })}
+      >
+        <SelectTrigger className="w-[180px]">
+          <SelectValue placeholder="Choose package type" />
+        </SelectTrigger>
+        <SelectContent className="dark">
+          {categories.map((cat) => (
+            <SelectItem key={cat.id} value={cat.id}>{cat.name}</SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
     </div>
   );
 };
 
 const Store: React.FC = () => {
   const [items, setItems] = useState<Package[]>([]);
-  const [filter, setFilter] = useState<SearchFilters>({ type: "all", server: "rust"});
-  const [isLoading, setIsLoading] = useState<boolean>(true); // Initialize loading state
+  const [filter, setFilter] = useState<SearchFilters>({
+    type: "all",
+    server: "",
+  });
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const fetchData = async () => {
-    setIsLoading(true); // Start loading
+    setIsLoading(true);
     const apiUrl = `https://headless.tebex.io/api/accounts/${
       import.meta.env.VITE_WEBSTORE_IDENT
     }/categories?includePackages=1`;
@@ -69,20 +109,24 @@ const Store: React.FC = () => {
     const pkgA: Package[] = [];
 
     jsonData.data.forEach((cat: any) => {
-      cat.packages.forEach((item: any) => {
-        pkgA.push({
-          name: item.name,
-          id: item.id,
-          innerhtml: item.description,
-          imageURL: item.image,
-          price: item.total_price,
-          category: {
-            name: item.category.name,
-            id: item.category.id,
-          },
-          type: item.type,
+        if (cat.id === filter.server || filter.server === "") {
+          console.log("a cat matched!")
+          console.log(cat)
+        }
+        cat.packages.forEach((item: any) => {
+          pkgA.push({
+            name: item.name,
+            id: item.id,
+            innerhtml: item.description,
+            imageURL: item.image,
+            price: item.total_price,
+            category: {
+              name: item.category.name,
+              id: item.category.id,
+            },
+            type: item.type,
+          });
         });
-      });
     });
 
     setItems(pkgA);

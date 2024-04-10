@@ -17,36 +17,26 @@ const Filter: React.FC<{
   setFilter: (filter: SearchFilters) => void;
 }> = ({ filter, setFilter }) => {
   
+  // useeffect hook to only get events category 
+  // replace dropdown with populated state of streamers 
   
   return (
-    <div className="flex gap-2">
+    <div className="flex gap-2 justify-center">
+      <h2>Filter by streamer: </h2>
+    <Select
+      value={filter.type}
+      onValueChange={(value) => setFilter({ ...filter, type: value })}
+    >
+      <SelectTrigger className="w-[180px]">
+        <SelectValue placeholder="Choose package type" />
+      </SelectTrigger>
+      <SelectContent className="dark">
+        <SelectItem value="lifetime">Lifetime</SelectItem>
+        <SelectItem value="monthly">Monthly</SelectItem>
+        <SelectItem value="all">All</SelectItem>
+      </SelectContent>
+    </Select>
 
-    <Select
-      value={filter.type}
-      onValueChange={(value) => setFilter({ ...filter, type: value })}
-    >
-      <SelectTrigger className="w-[180px]">
-        <SelectValue placeholder="Choose package type" />
-      </SelectTrigger>
-      <SelectContent className="dark">
-        <SelectItem value="lifetime">Lifetime</SelectItem>
-        <SelectItem value="monthly">Monthly</SelectItem>
-        <SelectItem value="all">All</SelectItem>
-      </SelectContent>
-    </Select>
-    <Select
-      value={filter.type}
-      onValueChange={(value) => setFilter({ ...filter, type: value })}
-    >
-      <SelectTrigger className="w-[180px]">
-        <SelectValue placeholder="Choose package type" />
-      </SelectTrigger>
-      <SelectContent className="dark">
-        <SelectItem value="lifetime">Lifetime</SelectItem>
-        <SelectItem value="monthly">Monthly</SelectItem>
-        <SelectItem value="all">All</SelectItem>
-      </SelectContent>
-    </Select>
     </div>
   );
 };
