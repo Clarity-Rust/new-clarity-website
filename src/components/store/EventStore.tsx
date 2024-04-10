@@ -1,6 +1,5 @@
 import { Package, SearchFilters } from "@/types";
 import { useState, useEffect } from "react";
-import { useMemo } from "react";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import { Category } from "@/types";
 
