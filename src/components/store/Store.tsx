@@ -18,6 +18,12 @@ const Filter: React.FC<{
   setFilter: (filter: SearchFilters) => void;
 }> = ({ filter, setFilter }) => {
   const [categories, setCategories] = useState<Category[]>([]);
+  const catLookup: Record<string, string> = {
+    "2xlifetime": "2639946",
+    "2xmonthly": "2634939",
+    "5xmonthly": "2651821",
+    "5xlifetime": "2651822",
+  };
 
   // useeffect hook to get categories to populate dropdown
   // replace dropdown with populated state of categories (minus the event category)
@@ -58,30 +64,17 @@ const Filter: React.FC<{
     <div className="flex gap-2">
       <h2> Package Type: </h2>
       <Select
-        value={filter.type}
-        onValueChange={(value) => setFilter({ ...filter, type: value })}
-      >
-        <SelectTrigger className="w-[180px]">
-          <SelectValue placeholder="Choose package type" />
-        </SelectTrigger>
-        <SelectContent className="dark">
-          <SelectItem value="lifetime">Lifetime</SelectItem>
-          <SelectItem value="monthly">Monthly</SelectItem>
-          <SelectItem value="all">All</SelectItem>
-        </SelectContent>
-      </Select>
-      <h2> Choose server: </h2>
-      <Select
         value={filter.server}
         onValueChange={(value) => setFilter({ ...filter, server: value })}
       >
         <SelectTrigger className="w-[180px]">
-          <SelectValue placeholder="Choose package type" />
+          <SelectValue placeholder="Choose category" />
         </SelectTrigger>
         <SelectContent className="dark">
-          {categories.map((cat) => (
-            <SelectItem key={cat.id} value={cat.id}>{cat.name}</SelectItem>
-          ))}
+          <SelectItem value={catLookup["2xlifetime"]}>2x Lifetime</SelectItem>
+          <SelectItem value={catLookup["2xmonthly"]}>2x Monthly</SelectItem>
+          <SelectItem value={catLookup["5xlifetime"]}>5x Lifetime</SelectItem>
+          <SelectItem value={catLookup["5xmontly"]}>5x Monthly</SelectItem>
         </SelectContent>
       </Select>
     </div>
@@ -100,7 +93,9 @@ const Store: React.FC = () => {
     setIsLoading(true);
     const apiUrl = `https://headless.tebex.io/api/accounts/${
       import.meta.env.VITE_WEBSTORE_IDENT
-    }/categories?includePackages=1`;
+    }/categories/${
+      filter.server === "" ? "2639946" : filter.server
+    }/?includePackages=1`;
     const response = await fetch(apiUrl, {
       method: "GET",
       headers: { Accept: "application/json" },
@@ -108,25 +103,19 @@ const Store: React.FC = () => {
     const jsonData = await response.json();
     const pkgA: Package[] = [];
 
-    jsonData.data.forEach((cat: any) => {
-        if (cat.id === filter.server || filter.server === "") {
-          console.log("a cat matched!")
-          console.log(cat)
-        }
-        cat.packages.forEach((item: any) => {
-          pkgA.push({
-            name: item.name,
-            id: item.id,
-            innerhtml: item.description,
-            imageURL: item.image,
-            price: item.total_price,
-            category: {
-              name: item.category.name,
-              id: item.category.id,
-            },
-            type: item.type,
-          });
-        });
+    jsonData.data.packages.forEach((item: any) => {
+      pkgA.push({
+        name: item.name,
+        id: item.id,
+        innerhtml: item.description,
+        imageURL: item.image,
+        price: item.total_price,
+        category: {
+          name: item.category.name,
+          id: item.category.id,
+        },
+        type: item.type,
+      });
     });
 
     setItems(pkgA);
@@ -136,31 +125,6 @@ const Store: React.FC = () => {
   useEffect(() => {
     fetchData().catch(console.error);
   }, [filter]);
-
-  const filteredItems = useMemo(() => {
-    if (filter.type === "lifetime") {
-      return items.filter((item) => item.category?.name.includes("Lifetime"));
-    } else if (filter.type === "monthly") {
-      return items.filter((item) => item.category?.name.includes("Monthly"));
-    } else {
-      // implement default sorting here. monthly packages first
-      return items.sort((a, b) => {
-        if (
-          a.category?.name.includes("Monthly") &&
-          !b.category?.name.includes("Monthly")
-        ) {
-          return -1;
-        } else if (
-          !a.category?.name.includes("Monthly") &&
-          b.category?.name.includes("Monthly")
-        ) {
-          return 1;
-        } else {
-          return 0;
-        }
-      });
-    }
-  }, [items, filter]);
 
   return (
     <div className="flex min-h-screen flex-col gap-4 bg-[#292930] p-4 ">
@@ -182,7 +146,7 @@ const Store: React.FC = () => {
             </div>
           </div>
         ) : (
-          filteredItems.map((item: Package) => (
+          items.map((item: Package) => (
             <Pkg size="md" showDesc="showPop" item={item} key={item.id} />
           ))
         )}
