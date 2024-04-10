@@ -48,6 +48,7 @@ export interface PkgProps {
   size: "sm" | "md" | "lg" | "wide";
   showDesc: "hidden" | "showPop";
   item: Package;
+  showChecks?: boolean;
 }
 
 export interface SearchFilters {

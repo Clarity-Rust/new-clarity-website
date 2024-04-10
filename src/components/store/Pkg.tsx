@@ -22,7 +22,7 @@ import {
 } from "../ui/dialog";
 import { Input } from "@/components/ui/input";
 
-const Pkg: React.FC<PkgProps> = ({ item }) => {
+const Pkg: React.FC<PkgProps> = ({ item, showChecks}) => {
   const { toast } = useToast();
   const { sharedState, setSharedState } = useAppContext();
   const [selectedOption, setSelectedOption] = useState<string>("one-time");
@@ -117,6 +117,7 @@ const Pkg: React.FC<PkgProps> = ({ item }) => {
       <h3 className="mb-2 text-2xl font-bold">{item.name}</h3>
       <div className="text-md mb-4 font-semibold">${item.price}</div>
       <div className="mb-4 flex flex-col gap-2">
+        {showChecks && ( 
         <div className="flex gap-2">
           <RadioGroup
             defaultValue="subscription"
@@ -138,8 +139,9 @@ const Pkg: React.FC<PkgProps> = ({ item }) => {
               <RadioGroupItem value="gift" id={`gift${item.id}`} />
               <Label htmlFor={`gift${item.id}`}>This is a gift</Label>
             </div> */}
-          </RadioGroup>
-        </div>
+          </RadioGroup> 
+        </div>)
+}
       </div>
       <div className="flex justify-between gap-2">
         {selectedOption === "gift" ? (
