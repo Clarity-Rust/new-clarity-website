@@ -135,6 +135,7 @@ const Navbar: React.FC = () => {
           <Link to="/store">Store</Link>
           <Link to="/staff">Staff</Link>
           <Link to="/leaderboard">Leaderboard</Link>
+          <Link to="/store/events">Live Events</Link>
         </div>
 
         <div className="flex items-center gap-4">
