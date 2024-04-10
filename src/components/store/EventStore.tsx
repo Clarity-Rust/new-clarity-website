@@ -2,6 +2,7 @@ import { Package, SearchFilters } from "@/types";
 import { useState, useEffect } from "react";
 import { useMemo } from "react";
 import { ReloadIcon } from "@radix-ui/react-icons";
+import { Category } from "@/types";
 
 import Pkg from "./Pkg";
 import {
@@ -16,41 +17,71 @@ const Filter: React.FC<{
   filter: SearchFilters;
   setFilter: (filter: SearchFilters) => void;
 }> = ({ filter, setFilter }) => {
-  
-  // useeffect hook to only get events category 
-  // replace dropdown with populated state of streamers 
-  
+  const [categories, setCategories] = useState<Category[]>([]);
+  // useeffect hook to only get events category
+  // replace dropdown with populated state of streamers
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const apiUrl = `https://headless.tebex.io/api/accounts/${
+        import.meta.env.VITE_WEBSTORE_IDENT
+      }/categories`;
+      const response = await fetch(apiUrl, {
+        method: "GET",
+        headers: { Accept: "application/json" },
+      });
+      const jsonData = await response.json();
+      const categoriesData = jsonData.data.filter(
+        (cat: any) => cat.parent !== null && cat.parent.name === "Event"
+      );
+      setCategories(categoriesData);
+
+      // Automatically set filter to the first category if not already set
+      if (categories.length > 0 && filter.server === "") {
+        setFilter({ ...filter, server: categories[0].id });
+      }
+    };
+
+    fetchData().catch(console.error);
+  }, [filter, setFilter]);
+
   return (
     <div className="flex gap-2 justify-center">
       <h2>Filter by streamer: </h2>
-    <Select
-      value={filter.type}
-      onValueChange={(value) => setFilter({ ...filter, type: value })}
-    >
-      <SelectTrigger className="w-[180px]">
-        <SelectValue placeholder="Choose package type" />
-      </SelectTrigger>
-      <SelectContent className="dark">
-        <SelectItem value="lifetime">Lifetime</SelectItem>
-        <SelectItem value="monthly">Monthly</SelectItem>
-        <SelectItem value="all">All</SelectItem>
-      </SelectContent>
-    </Select>
-
+      <Select
+        value={filter.server}
+        onValueChange={(value) => setFilter({ ...filter, server: value })}
+      >
+        <SelectTrigger className="w-[180px]">
+          <SelectValue placeholder="Choose package type" />
+        </SelectTrigger>
+        <SelectContent className="dark">
+          {categories.map((category) => (
+            <SelectItem key={category.id} value={category.id}>
+              {category.name}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
     </div>
   );
 };
 
 const EventStore: React.FC = () => {
   const [items, setItems] = useState<Package[]>([]);
-  const [filter, setFilter] = useState<SearchFilters>({ type: "all", server: ""});
-  const [isLoading, setIsLoading] = useState<boolean>(true); 
+  const [filter, setFilter] = useState<SearchFilters>({
+    type: "all",
+    server: "",
+  });
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const fetchData = async () => {
-    setIsLoading(true); // Start loading
+    setIsLoading(true);
     const apiUrl = `https://headless.tebex.io/api/accounts/${
       import.meta.env.VITE_WEBSTORE_IDENT
-    }/categories?includePackages=1`;
+    }/categories/${
+      filter.server === "" ? "2639946" : filter.server
+    }/?includePackages=1`;
     const response = await fetch(apiUrl, {
       method: "GET",
       headers: { Accept: "application/json" },
@@ -58,20 +89,18 @@ const EventStore: React.FC = () => {
     const jsonData = await response.json();
     const pkgA: Package[] = [];
 
-    jsonData.data.forEach((cat: any) => {
-      cat.packages.forEach((item: any) => {
-        pkgA.push({
-          name: item.name,
-          id: item.id,
-          innerhtml: item.description,
-          imageURL: item.image,
-          price: item.total_price,
-          category: {
-            name: item.category.name,
-            id: item.category.id,
-          },
-          type: item.type,
-        });
+    jsonData.data.packages.forEach((item: any) => {
+      pkgA.push({
+        name: item.name,
+        id: item.id,
+        innerhtml: item.description,
+        imageURL: item.image,
+        price: item.total_price,
+        category: {
+          name: item.category.name,
+          id: item.category.id,
+        },
+        type: item.type,
       });
     });
 
@@ -83,38 +112,15 @@ const EventStore: React.FC = () => {
     fetchData().catch(console.error);
   }, [filter]);
 
-  const filteredItems = useMemo(() => {
-    if (filter.type === "lifetime") {
-      return items.filter((item) => item.category?.name.includes("Lifetime"));
-    } else if (filter.type === "monthly") {
-      return items.filter((item) => item.category?.name.includes("Monthly"));
-    } else {
-      // implement default sorting here. monthly packages first
-      return items.sort((a, b) => {
-        if (
-          a.category?.name.includes("Monthly") &&
-          !b.category?.name.includes("Monthly")
-        ) {
-          return -1;
-        } else if (
-          !a.category?.name.includes("Monthly") &&
-          b.category?.name.includes("Monthly")
-        ) {
-          return 1;
-        } else {
-          return 0;
-        }
-      });
-    }
-  }, [items, filter]);
-
   return (
     <div className="flex min-h-screen flex-col gap-4 bg-[#292930] p-4 ">
       <h1 className="text-3xl text-white">
-        Welcome to the Clarity Rust Store!
+        Welcome to the Clarity Rust Event Store!
       </h1>
       <p className="w-1/2 font-medium">
-        Here you can purchase packages during events to support your favorite streamers. Packages are sorted by streamer name. (add better description here) 
+        Here you can purchase packages during events to support your favorite
+        streamers. Packages are sorted by streamer name. (add better description
+        here)
       </p>
       <Filter filter={filter} setFilter={setFilter} />
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
@@ -125,8 +131,14 @@ const EventStore: React.FC = () => {
             </div>
           </div>
         ) : (
-          filteredItems.map((item: Package) => (
-            <Pkg size="md" showDesc="showPop" item={item} key={item.id} />
+          items.map((item: Package) => (
+            <Pkg
+              size="md"
+              showDesc="showPop"
+              item={item}
+              key={item.id}
+              showChecks={false}
+            />
           ))
         )}
       </div>
