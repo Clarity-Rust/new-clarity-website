@@ -16,7 +16,7 @@ const Filter: React.FC<{
   filter: SearchFilters;
   setFilter: (filter: SearchFilters) => void;
 }> = ({ filter, setFilter }) => {
-  const [categories, setCategories] = useState<Category[]>([]);
+  // const [categories, setCategories] = useState<Category[]>([]);
   const catLookup: Record<string, string> = {
     "2xlifetime": "2639946",
     "2xmonthly": "2634939",
@@ -50,11 +50,11 @@ const Filter: React.FC<{
       });
 
       // Update the state once with the accumulated updates
-      setCategories(newCategories);
+      // setCategories(newCategories);
     };
 
     // Initialize state to empty at the start of fetchData to prevent duplicates on re-render
-    setCategories([]);
+    // setCategories([]);
 
     fetchData().catch(console.error);
   }, []);
@@ -63,7 +63,7 @@ const Filter: React.FC<{
     <div className="flex gap-2">
       <h2> Package Type: </h2>
       <Select
-        value={filter.server}
+        value={filter.server === "" ? "2639946" : filter.server}
         onValueChange={(value) => setFilter({ ...filter, server: value })}
       >
         <SelectTrigger className="w-[180px]">
@@ -146,7 +146,13 @@ const Store: React.FC = () => {
           </div>
         ) : (
           items.map((item: Package) => (
-            <Pkg size="md" showDesc="showPop" item={item} key={item.id} />
+            <Pkg
+              size="md"
+              showDesc="showPop"
+              item={item}
+              key={item.id}
+              showChecks={item.type !== "single"}
+            />
           ))
         )}
       </div>

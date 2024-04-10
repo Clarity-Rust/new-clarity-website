@@ -24,7 +24,7 @@ const AppContent: React.FC = () => {
         <Route path="/store" element={<Store />} />
         <Route path="/staff" element={<Staff />} />
         <Route path="/faq" element={<Faq />} />
-        <Route path="/store/events" element={<EventStore />} />
+        <Route path="/store/event" element={<EventStore />} />
         <Route path="*" element={<PageNotFound />} />
       </Routes>
       <Toaster />
